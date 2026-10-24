@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-10-25T02:25:20+05:30 — Final production verification and title fallback feedback
+
+- Changed: title screen renders the existing notice and explicit 3D retries clear stale feedback so a first-load model failure is explained before a run starts. Added final production replay/recovery evidence to integration documentation.
+- Why: an intentionally missing map correctly fell back and retried after restoration, but its title menu did not show the reason for the 3D switch.
+- Validation: 74 tests, typecheck/lint, collider data check and fresh production build passed after this feedback change. Actual production UI reached all three endings, retained guided/3D saves and replay protection, and recovered from the induced missing-model case. Hosted preview remains blocked on Vercel team-access approval; local production preview is verified.
+- Limitations: no physical mobile/gamepad test; custom kinematic collision model as documented. No merge.
+
 ## 2026-10-25T02:15:58+05:30 — Integrate approved Blender district and memory keeper
 
 - Changed: imported the three checksum-verified runtime GLBs and source integration notes; replaced procedural map/player visuals, kept the existing camera-relative controller, and added floor-height sampling from nine exported slab/ramp/deck surfaces and 64 collision proxies. Three named bridge parents share the exact gate offset used by navigation; NPC spawns match exported empties. Six joints use the new approved layout; stories, choices, three endings and guided mode remain.

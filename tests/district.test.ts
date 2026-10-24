@@ -130,3 +130,10 @@ it("resets a stage once with honest feedback and rescues a stranded keeper", () 
   expect(playerRuntime.pos).toEqual({ x: -3.4, z: 2.8 });
   expect(useGameStore.getState().lastNotice).toMatch(/reset.*plaza/i);
 });
+it("clears stale fallback feedback when explicitly retrying 3D", () => {
+  const s = useGameStore.getState();
+  s.setMode("story");
+  s.setNotice("3D assets could not load");
+  s.setMode("3d");
+  expect(useGameStore.getState().lastNotice).toBeNull();
+});

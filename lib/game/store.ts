@@ -401,7 +401,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     });
   },
 
-  setMode: (mode) => set({ mode }),
+  setMode: (mode) =>
+    set({ mode, ...(mode === "3d" ? { lastNotice: null } : {}) }),
 
   setNearby: (spec) => {
     if (get().nearby?.id !== spec?.id) set({ nearby: spec });

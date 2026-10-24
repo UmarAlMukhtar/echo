@@ -8,6 +8,7 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
   const newGame = useGameStore((s) => s.newGame);
   const continueGame = useGameStore((s) => s.continueGame);
   const hasSave = useGameStore((s) => s.hasSave);
+  const lastNotice = useGameStore((s) => s.lastNotice);
   const saveStatus = useGameStore((s) => s.saveStatus);
   const reducedMotion = useGameStore((s) => s.reducedMotion);
   const setReducedMotion = useGameStore((s) => s.setReducedMotion);
@@ -27,9 +28,9 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
         <h1>{GAME_TITLE}</h1>
         <p className="tagline">
           A flooded canal district suspended in mist. Turn the relay joints,
-          carry the signal across the causeways to three memory platforms,
-          hear what each resident remembers — then decide what a city is
-          allowed to forget.
+          carry the signal across the causeways to three memory platforms, hear
+          what each resident remembers — then decide what a city is allowed to
+          forget.
         </p>
         <div className="title-menu" role="menu" aria-label="Main menu">
           {pendingMode !== null ? (
@@ -69,6 +70,11 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
               </button>
             </>
           )}
+          {lastNotice && (
+            <p className="dim" role="status">
+              {lastNotice}
+            </p>
+          )}
           {saveStatus === "corrupt" && (
             <p className="dim" role="status">
               A saved game was found but couldn&apos;t be read — it was cleared.
@@ -82,7 +88,8 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
           )}
           {saveStatus === "unavailable" && (
             <p className="dim" role="status">
-              Saves are unavailable in this browser; progress won&apos;t persist.
+              Saves are unavailable in this browser; progress won&apos;t
+              persist.
             </p>
           )}
           {!webglOk && (
