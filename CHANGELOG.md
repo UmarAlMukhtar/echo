@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-10-24T17:41:00+00:00 — Save-overwrite confirmation for Guided story mode
+
+- Changed: `components/ui/TitleScreen.tsx` — both new-run entries ("New game" and "Guided story mode") now route through the same pending-mode confirmation instead of only New game; Guided story mode previously called `newGame("story")` directly and bypassed the overwrite guard.
+- Why: Codex browser automation found the last save-protection gap — a Guided story mode click over an existing save discarded it without confirmation.
+- Also: removed the stale limitation that the other two endings were only reach-tested via unit coverage — all three are now independently browser-reached.
+- Validation: `npx tsc --noEmit` clean, `npm run lint` clean, `npx vitest run` 52/52, `npm run build` clean (exit 0 each). CDP browser check on the rebuilt production preview: Guided story mode shows "Start over? / Keep save" instead of starting, Keep save cancels and preserves `echo-save-v2`, Start over launches story mode. Fresh 390px screenshots of guided routing and expanded pause Signal help taken for layout review.
+- Limitations: none new.
+
 ## 2026-10-24T21:53:05+05:30 — Correct Devin Hack Kochi event guidance
 
 - Changed: corrected the current event name and AI tool guidance in `.github/pull_request_template.md`, `AGENTS.md`, `AI_USAGE.md`, `CHANGELOG.md`, `README.md`, `RULES.md`, `SUBMISSION.md`.
@@ -16,7 +24,7 @@ Record each meaningful project change during the event, newest first. Update thi
 
 - Changed: Documentation only — recorded the final submitted commit SHA in SUBMISSION.md.
 - Validation summary for the shipped slice: `npx tsc --noEmit` clean; `npm run lint` clean; `npx vitest run` 52/52; `npm run build` clean (production build now serving the preview). Codex browser automation review on the production build: complete 3D path — all six joints via real WASD/E, all three energized causeways, three residents, three open choices, then all three endings independently browser-reached (THE CITY REMEMBERS open, THE QUIET CITY all-sealed, THE WATCHER mixed), guided-mode replays of all three stages via real buttons, joint reset and joint-state save/reload, consequence panels, save restore across reload. Devin's own production-build checks (CDP): guided-mode full playthrough to ending (store-equivalent actions + DOM gates), title overwrite confirmation, narrow viewport, ending recap + replay buttons, save v2 restore.
-- Limitations: reduced-motion was code-verified (static title orbit, halted motion flags) plus earlier screenshot review; remaining two endings reach-tested via unit coverage of the 8-combination rule rather than fresh full replays.
+- Limitations: reduced-motion was code-verified (static title orbit, halted motion flags) plus earlier screenshot review.
 
 ## 2026-10-24T17:35:00+00:00 — Guided-mode accessibility + shared signal help
 

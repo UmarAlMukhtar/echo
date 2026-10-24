@@ -13,7 +13,12 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
   const setReducedMotion = useGameStore((s) => s.setReducedMotion);
   const mode = useGameStore((s) => s.mode);
   const setMode = useGameStore((s) => s.setMode);
-  const [confirmNew, setConfirmNew] = useState(false);
+  const [pendingMode, setPendingMode] = useState<"3d" | "story" | null>(null);
+
+  const requestNew = (m: "3d" | "story") => {
+    if (hasSave) setPendingMode(m);
+    else newGame(m);
+  };
 
   return (
     <div className="title-screen">
@@ -27,18 +32,7 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
           allowed to forget.
         </p>
         <div className="title-menu" role="menu" aria-label="Main menu">
-          {!(hasSave && confirmNew) && (
-            <button
-              className="btn primary"
-              autoFocus
-              onClick={() =>
-                hasSave ? setConfirmNew(true) : newGame(webglOk ? mode : "story")
-              }
-            >
-              New game
-            </button>
-          )}
-          {hasSave && confirmNew && (
+          {pendingMode !== null ? (
             <div role="group" aria-label="Confirm new game">
               <p className="dim">
                 Start over? Your saved journey will be overwritten.
@@ -47,24 +41,34 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
                 <button
                   className="btn primary"
                   autoFocus
-                  onClick={() => newGame(webglOk ? mode : "story")}
+                  onClick={() => newGame(pendingMode)}
                 >
                   Start over
                 </button>
-                <button className="btn" onClick={() => setConfirmNew(false)}>
+                <button className="btn" onClick={() => setPendingMode(null)}>
                   Keep save
                 </button>
               </div>
             </div>
+          ) : (
+            <>
+              <button
+                className="btn primary"
+                autoFocus
+                onClick={() => requestNew(webglOk ? mode : "story")}
+              >
+                New game
+              </button>
+              {hasSave && (
+                <button className="btn" onClick={continueGame}>
+                  Continue
+                </button>
+              )}
+              <button className="btn" onClick={() => requestNew("story")}>
+                Guided story mode
+              </button>
+            </>
           )}
-          {hasSave && (
-            <button className="btn" onClick={continueGame}>
-              Continue
-            </button>
-          )}
-          <button className="btn" onClick={() => newGame("story")}>
-            Guided story mode
-          </button>
           {saveStatus === "corrupt" && (
             <p className="dim" role="status">
               A saved game was found but couldn&apos;t be read — it was cleared.
