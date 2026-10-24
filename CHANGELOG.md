@@ -2,6 +2,12 @@
 
 Record each meaningful project change during the event, newest first. Update this file in the same commit as the change. Use a real timestamp with timezone, for example `YYYY-MM-DDTHH:MM:SS+05:30`.
 
+## 2026-10-24T17:45:00+00:00 — Final verification pass + submission SHA
+
+- Changed: Documentation only — recorded the final submitted commit SHA in SUBMISSION.md.
+- Validation summary for the shipped slice: `npx tsc --noEmit` clean; `npm run lint` clean; `npx vitest run` 52/52; `npm run build` clean (production build now serving the preview). Independent browser review by Umar on the production build: complete 3D path — all six joints via real WASD/E, all three energized causeways, three residents, three open choices, THE CITY REMEMBERS ending, replay confirm/reset, stages 1–2 consequence panels, save restore across reload. Devin's own production-build checks (CDP): guided-mode full playthrough to ending (store-equivalent actions + DOM gates), title overwrite confirmation, narrow viewport, ending recap + replay buttons, save v2 restore.
+- Limitations: reduced-motion was code-verified (static title orbit, halted motion flags) plus earlier screenshot review; remaining two endings reach-tested via unit coverage of the 8-combination rule rather than fresh full replays.
+
 ## 2026-10-24T17:35:00+00:00 — Guided-mode accessibility + shared signal help
 
 - Changed: Guided story mode now shows what the beam is doing instead of bare "partway and dies": a shared `stageGuide` helper in `lib/game/signal.ts` describes each stage's route (emitter direction → target platform), every joint's current compass connections in words, the exact joint where the signal dies with the side it arrives on, and an optional computed hint ("turn j3b once — the signal must pass north–south"). Guided mode gained a toolbar with the live objective, Pause, Return-to-3D and a Hints on/off toggle. The 3D pause panel gained a "Signal help" section with the same per-stage description, hint and per-stage Reset — reset was previously guided-mode-only and there was no hint anywhere.
