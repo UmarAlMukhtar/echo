@@ -4,11 +4,10 @@ Use Codex during the hackathon and briefly document its actual contribution here
 
 ## Event build log
 
-No participant AI usage has been recorded yet. Replace the placeholder row as you build. Mark human review as pending until someone has reviewed the contribution.
-
 | Date and time with timezone | Tool / model, if known | Task | Assistance and affected files | Human review / corrections | Validation and result |
 | --- | --- | --- | --- | --- | --- |
-| TODO | Codex | TODO | TODO | Pending | TODO |
+| 2026-10-24T16:45:00+00:00 | Devin (Cognition AI) | Implemented the complete ECHO vertical slice: game design, all source code, tests, and docs | Designed narrative/mechanics; wrote `app/`, `lib/game/` (story, puzzle, save, store, city), `components/scene/*`, `components/ui/*`, `components/story/*`, `tests/game.test.ts`, `DESIGN.md`, `README.md` | Pending human review | `typecheck`, `eslint`, `vitest` (28 tests), `next build` all pass; browser playthrough logged below |
+| 2026-10-24T17:30:00+00:00 | Devin (Cognition AI) | Browser playtest + fixes | Played through the build in a real browser (movement, camera, interactions, puzzle, decisions, endings, save/resume, story mode); fixed defects found | Pending human review | See CHANGELOG entry for the playtest pass |
 
 ## Template preparation
 

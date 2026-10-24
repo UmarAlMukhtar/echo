@@ -4,12 +4,12 @@ Complete this file during the hackathon and use it to prepare your submission th
 
 ## Project
 
-- **Project name:** TODO
-- **Short description:** TODO — describe the problem, what you built, and who benefits.
-- **Code repository URL:** TODO
-- **Final submitted implementation commit SHA:** TODO
-- **Working demo URL or local demo steps:** TODO
-- **Demo access requirements:** TODO — explain any prerequisites without including private credentials.
+- **Project name:** ECHO: The City That Remembers
+- **Short description:** A ~10-minute 3D interactive mystery set in a flooded futuristic canal district inspired by Kochi. Three residents remember a disappearance differently; the player aligns their memories at a central relay, then makes three decisions that visibly reshape the city, leading to one of three endings. Runs in the browser — includes a no-WebGL guided story mode.
+- **Code repository URL:** https://github.com/UmarAlMukhtar/echo
+- **Final submitted implementation commit SHA:** TODO — record the final pushed SHA here.
+- **Working demo URL or local demo steps:** `npm install && npm run dev`, then open http://localhost:3000. (Preview deployment URL: TODO if a deploy is configured.)
+- **Demo access requirements:** A modern browser. WebGL recommended; a fully playable Guided Story Mode covers no-WebGL, touch, and keyboard-only play. No accounts, keys, or services needed.
 
 ## Participants
 
@@ -17,18 +17,23 @@ Participate solo or in a team of up to 4. Remove unused rows.
 
 | Participant name | GitHub handle | Contribution |
 | --- | --- | --- |
-| TODO | TODO | TODO |
+| Umar | UmarAlMukhtar | Project owner; design direction and review of the Devin-built implementation |
 
 ## Run and demonstrate
 
-- **Prerequisites and versions:** TODO
-- **Install command:** TODO
-- **Required environment variable names:** TODO — use a sanitized example file if needed.
-- **Start command:** TODO
-- **Demo walkthrough:** TODO — brief steps showing the implemented features.
-- **Checks performed and results:** TODO
-- **Known limitations or incomplete features:** TODO
-- **Libraries, APIs, and public datasets used:** TODO — link sources and record attribution where required.
+- **Prerequisites and versions:** Node.js 20+ (built on Node 24), npm 10+
+- **Install command:** `npm install`
+- **Required environment variable names:** none
+- **Start command:** `npm run dev` (dev) or `npm run build && npm start` (production)
+- **Demo walkthrough:**
+  1. Title → *New game* → read the intro.
+  2. Meet Mirai (relay garden), Devi (west dock), Ilyas (workshop) — walk to each cyan marker and press E; each grants a fragment and a clue.
+  3. Attune the memory relay (plaza): tune the three dials to the phases in the clues (tide rising / lantern lit / rain passed).
+  4. Make the three decisions at the relay, the canal lock, and the archive vault — watch the district change each time.
+  5. Climb to the overlook for the ending recap; replay to reach the other two endings.
+- **Checks performed and results:** `npm run typecheck` clean; `npx eslint .` clean; `npx vitest run` 28/28 pass; `npm run build` succeeds. Browser playthrough results in CHANGELOG.
+- **Known limitations or incomplete features:** No audio (all clues written); story-mode navigation is abstracted to named locations; procedural art only (no downloaded assets).
+- **Libraries, APIs, and public datasets used:** Next.js, React, three.js, React Three Fiber, drei, zustand, vitest — see package.json; no external assets or datasets.
 - **AI usage record:** [AI_USAGE.md](AI_USAGE.md)
 - **Development change log:** [CHANGELOG.md](CHANGELOG.md)
 
