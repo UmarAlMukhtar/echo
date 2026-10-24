@@ -40,7 +40,7 @@ npm run build      # production build
 
 ## Hosted preview
 
-[Play ECHO](https://echo-9z9tk1hfx-umar-al-mukhtar-s-projects.vercel.app/) — public, browser-verified preview of `590b8e96676c3df5146fd365d5031abb524eb0cf` (the game code is unchanged from `d689735`).
+[Play ECHO](https://echo-git-codex-blender-integration-umar-al-mukhtar-s-projects.vercel.app/) — public stable preview of `codex/blender-integration`, including the walking animation update (`4bccde932620e0eb4e1659334369f8f211e065ab`). Future pushes to this branch update the same link.
 
 The ECHO Vercel project is [umar-al-mukhtar-s-projects/echo](https://vercel.com/umar-al-mukhtar-s-projects/echo).
 It uses the repository root, the Next.js preset and Node.js 24. Pushes to

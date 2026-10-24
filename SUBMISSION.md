@@ -7,9 +7,9 @@ Complete this file during the hackathon and use it to prepare your submission th
 - **Project name:** ECHO: The City That Remembers
 - **Short description:** A ~10-minute 3D architectural puzzle-mystery in a floating pale-stone canal district. Rotate relay joints to route a visible signal beam across the causeways it energizes, reach three memory platforms, hear three conflicting memories of a disappearance, then make three decisions that visibly reshape the city — leading to one of three endings. Runs in the browser — includes a no-WebGL guided story mode.
 - **Code repository URL:** https://github.com/UmarAlMukhtar/echo
-- **Current implementation commit SHA:** `d689735ef2af27893f6563f51e8a44a6df566496` (branch `codex/blender-integration`, draft PR #3; unmerged). Owner submission is not confirmed.
-- **Working demo URL:** [Play ECHO](https://echo-9z9tk1hfx-umar-al-mukhtar-s-projects.vercel.app/). Public preview built from `590b8e96676c3df5146fd365d5031abb524eb0cf`; only documentation differs from the implementation SHA above. Local alternative: `npm install && npm run dev`, then open http://localhost:3000.
-- **Demo access requirements:** A modern browser. WebGL recommended; a fully playable Guided Story Mode covers no-WebGL, touch, and keyboard-only play. No game accounts, keys, or services needed. The specific demo hostname above has an owner-approved protection exception; other previews retain the default Vercel team protection.
+- **Current implementation commit SHA:** `4bccde932620e0eb4e1659334369f8f211e065ab` (branch `codex/blender-integration`, draft PR #3; unmerged). Owner submission is not confirmed.
+- **Working demo URL:** [Play ECHO](https://echo-git-codex-blender-integration-umar-al-mukhtar-s-projects.vercel.app/). Public stable branch preview; the walking animation was verified on the implementation SHA above and later documentation updates use the same link. Local alternative: `npm install && npm run dev`, then open http://localhost:3000.
+- **Demo access requirements:** A modern browser. WebGL recommended; a fully playable Guided Story Mode covers no-WebGL, touch, and keyboard-only play. No game accounts, keys, or services needed. The stable branch hostname above has an owner-approved protection exception for current/future updates. Other previews retain the default Vercel team protection, apart from the earlier fixed public demo.
 
 ## Participants
 
@@ -31,7 +31,7 @@ List participants according to the organizers' current participation format. Rem
   3. Stage 2: chain two elbow joints so the beam bends around the gap to the dock platform; meet Devi, make decision 2.
   4. Stage 3: interleave an elbow, a straight joint and a final elbow to reach the archive platform; meet Ilyas, read the reveal, make decision 3.
   5. Return to the south plaza overlook for the ending recap; replay to reach the other two endings.
-- **Checks performed and results:** `npm run typecheck` clean; `npm run lint` clean; `npm test` 74/74 pass; `npm run build` succeeds. Browser playthrough results in CHANGELOG.
+- **Checks performed and results:** `npm run typecheck` clean; `npm run lint` clean; `npm test` 77/77 pass; `npm run build` succeeds. Browser playthrough results in CHANGELOG.
 - **Known limitations or incomplete features:** No audio (all clues written); story-mode navigation is abstracted to named locations; custom collision ramps smooth the visible stair risers; no physical mobile/gamepad checks; camera is a restrained elevated orbit rather than free pointer-lock.
 - **Libraries, APIs, and public datasets used:** Next.js, React, three.js, React Three Fiber, drei, zustand, vitest — see package.json; original Blender district and memory keeper from the approved asset branch (provenance in `docs/assets/README.md`); no external datasets.
 - **AI usage record:** [AI_USAGE.md](AI_USAGE.md)

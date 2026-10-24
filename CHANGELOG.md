@@ -1,5 +1,11 @@
 # Change log
 
+## 2026-10-25T04:33:02+05:30 — Publish the stable ECHO animation preview
+
+- Changed: with explicit owner approval, made only the stable codex/blender-integration preview hostname public for current/future branch updates. Updated README and SUBMISSION links, implementation SHA (4bccde9), 77-test count, verification evidence and AI usage.
+- Validation: hosted preview Ready; real-keyboard frames showed both walking cadences, E solved the first stage and reload/Continue restored it with no browser warnings/errors. Anonymous exact-URL HTML and all three GLB requests returned HTTP 200 without redirect; model hashes matched. Documentation whitespace/local-link checks passed.
+- Limits: documentation/publication only; prior 77-test/lint/typecheck/build results apply to the unchanged animation code. Vercel Authentication remains enabled elsewhere; no production promotion, merge, unrelated project change, event submission or physical mobile/gamepad testing.
+
 ## 2026-10-25T04:11:13+05:30 — Make keeper footsteps visible and quicken the normal gait
 
 - Changed: `lib/game/keeper-animation.ts` now plays Walk while moving even under Reduced Motion. Normal cadence is 1.8×; reduced cadence is 1× with a neutral still pose when stopped. Existing authored breathing, scarf/lantern sway and one-shot interactions are reused. Added real-GLB leg/arm movement, cadence and quiet-pose tests and updated README/design/integration/AI usage documentation.
