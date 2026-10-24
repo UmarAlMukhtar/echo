@@ -1,5 +1,23 @@
 # Change log
 
+## 2026-10-24T23:40:00+05:30 — Environment layout review blockout
+
+- Changed: added `assets/echo_memory_district/` with a deterministic Blender
+  Python generator, editable blockout, review GLB, three rendered views, per-object
+  JSON inventory and integration notes. Added the asset command to `README.md`.
+- Why: provide an original compact plaza and three connected memory platforms
+  for layout approval before detailing. Three movable bridge parents and three
+  NPC spawn empties are independently named; simple collision proxies are in Blend.
+- Validation: Blender 4.5.3 LTS background startup and 64 × 64 CPU Cycles smoke
+  render passed. Generated three 1440 × 1080 previews. Geometry raycasts pass for
+  all three routes at 0.05 m intervals across a 0.6 m corridor; max riser 0.15 m.
+  Review GLB structure checked: 1,128 triangles, 5 materials, 61 nodes, three
+  bridge parents and three NPC spawn nodes, correct Y-up export translations.
+- Limitations: blockout awaiting layout review; no final detailing or production
+  optimization. Visual GLB omits collision proxies, review labels and lighting.
+  Existing fixed-height movement/floor maps do not yet support this proposal.
+  Application and gameplay source files are unchanged; no application tests needed.
+
 ## 2026-10-24T17:58:00+00:00 — Failed milestone writes surface feedback
 
 - Changed: `lib/game/store.ts` — `persist` now uses `writeSave`'s result: when storage exists but the write throws, `lastNotice` becomes "Couldn't save progress — browser storage is unavailable." instead of silently reloading an older valid save and reporting `saveStatus:"ok"` as if the milestone persisted. The older save still keeps `hasSave`/`saveStatus` from what is actually stored, so Continue and the overwrite guard reflect reality. No storage at all stays covered by the startup banner rather than spamming every milestone.

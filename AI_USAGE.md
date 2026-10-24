@@ -1,5 +1,19 @@
 # AI usage record
 
+## Environment blockout — 2026-10-24T23:40:00+05:30
+
+- Tool: Codex with Blender 4.5.3 LTS running headlessly on CPU.
+- Task: create an original compact environment blockout on an isolated asset branch.
+- Assistance: inspected five user references, authored the deterministic Python
+  scene generator, built three connected routes and movable bridge groups,
+  rendered three layout views, and documented scale, axes, pivots and inventory.
+- Checks: background startup + CPU render smoke test, actual-mesh route raycasts,
+  GLB structure/names/axis validation and agent visual inspection of all previews.
+- Corrections: tiny seam overlaps added after exact-boundary raycasts found cracks;
+  presentation exposure/palette adjusted after inspecting the first renders.
+- Human review: pending layout approval; detailing and integration have not begun.
+- Scope: assets and documentation only; application and gameplay code untouched.
+
 If maintaining this record, briefly document the actual contributions of whichever AI tools you use at Devin Hack Kochi. Add a row after each meaningful task or milestone. Keep summaries concise and omit secrets, private data, and full chat transcripts.
 
 ## Event build log
