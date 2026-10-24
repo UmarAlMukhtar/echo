@@ -41,6 +41,14 @@ consent. The signed-in browser provided access, so Codex created the separate
 ECHO project, connected only UmarAlMukhtar/echo, selected Next.js and Node.js 24,
 and confirmed that `main` remains the production branch. The manual action
 labeled Create Preview Deployment incorrectly returned a Production build;
-that build was canceled before it became ready. Git preview deployment of the
-integration branch is the next verification step. No protection was disabled,
-credentials bypassed, or unrelated project changed.
+that build was canceled before it became ready. The Git preview subsequently
+built successfully in 59 seconds, generated all five static pages, and was explicitly classified Preview. At setup time no
+protection was changed and no unrelated project was modified.
+
+### Hosted verification — 2026-10-25T03:47:29+05:30
+
+- Public URL: [https://echo-9z9tk1hfx-umar-al-mukhtar-s-projects.vercel.app/](https://echo-9z9tk1hfx-umar-al-mukhtar-s-projects.vercel.app/).
+- Exact deployed commit: `590b8e96676c3df5146fd365d5031abb524eb0cf`; game code/assets are identical to `d689735ef2af27893f6563f51e8a44a6df566496`. Deployment ID: `dpl_AFcG3qFD5g7PhjR84nK9oatkk9n5`.
+- Real hosted browser input: fresh 3D run, WASD movement, E to align garden joint, imported bridge crossing, Mirai dialogue and open choice. Reload/Continue retained that save/location. Guided mode then completed dock/archive stages, all residents, reveal, remaining choices and THE CITY REMEMBERS; Return to 3D rendered the completed district and movement worked. No state injection. The hosted browser log contained no warnings/errors during these flows.
+- Public access: after explicit owner approval, added a deployment protection exception for **only this exact hostname**. Vercel Authentication remains enabled for other deployments. An anonymous request (no cookies, credentials or bypass token) returned the ECHO HTML with HTTP 200 and no sign-in redirect. All three hosted GLBs returned HTTP 200 and matched the delivered SHA-256 values and byte sizes.
+- Scope: the other two endings and the complete 3D route were independently checked on the local production/integration build as recorded above, not replayed again on this host. No physical mobile/gamepad testing, no production promotion, no merge, no event submission. The immutable public URL targets the tested deployment even if later documentation commits trigger other Git previews.

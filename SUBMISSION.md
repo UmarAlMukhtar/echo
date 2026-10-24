@@ -8,8 +8,8 @@ Complete this file during the hackathon and use it to prepare your submission th
 - **Short description:** A ~10-minute 3D architectural puzzle-mystery in a floating pale-stone canal district. Rotate relay joints to route a visible signal beam across the causeways it energizes, reach three memory platforms, hear three conflicting memories of a disappearance, then make three decisions that visibly reshape the city — leading to one of three endings. Runs in the browser — includes a no-WebGL guided story mode.
 - **Code repository URL:** https://github.com/UmarAlMukhtar/echo
 - **Current implementation commit SHA:** `d689735ef2af27893f6563f51e8a44a6df566496` (branch `codex/blender-integration`, draft PR #3; unmerged). Owner submission is not confirmed.
-- **Working demo URL or local demo steps:** `npm install && npm run dev`, then open http://localhost:3000. Hosted Git previews are listed in [Vercel Deployments](https://vercel.com/umar-al-mukhtar-s-projects/echo/deployments); check their status before sharing.
-- **Demo access requirements:** A modern browser. WebGL recommended; a fully playable Guided Story Mode covers no-WebGL, touch, and keyboard-only play. No game accounts, keys, or services needed. Hosted preview access may require the project owner's Vercel sign-in under the existing deployment protection.
+- **Working demo URL:** [Play ECHO](https://echo-9z9tk1hfx-umar-al-mukhtar-s-projects.vercel.app/). Public preview built from `590b8e96676c3df5146fd365d5031abb524eb0cf`; only documentation differs from the implementation SHA above. Local alternative: `npm install && npm run dev`, then open http://localhost:3000.
+- **Demo access requirements:** A modern browser. WebGL recommended; a fully playable Guided Story Mode covers no-WebGL, touch, and keyboard-only play. No game accounts, keys, or services needed. The specific demo hostname above has an owner-approved protection exception; other previews retain the default Vercel team protection.
 
 ## Participants
 

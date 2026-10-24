@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-10-25T03:47:29+05:30 — Verify and publish the scoped ECHO preview
+
+- Changed: recorded the working public demo URL and exact deployment SHA in README, SUBMISSION and integration verification; added actual hosted-check and owner-approval evidence to AI_USAGE.
+- Validation: Vercel Git preview `590b8e96676c3df5146fd365d5031abb524eb0cf` reached Ready in 59 seconds. Real hosted WASD/E completed garden routing/bridge/NPC/choice; reload retained progress. Guided UI completed dock/archive/reveal/remaining choices and The City Remembers, then returned to a moving 3D keeper. Browser warnings/errors were empty. Anonymous HTML plus all three model files returned HTTP 200; model hashes match the immutable handoff. Documentation whitespace/local-link checks passed.
+- Access: owner explicitly approved public access to the exact delivered hostname; added only that domain exception. Other previews retain Vercel Authentication. No production promotion, merge or unrelated project changes.
+- Limits: no new application code (prior 74-test/lint/typecheck/build evidence); only one ending was replayed on this host, with all three checked locally. No physical mobile/gamepad testing; event submission not performed.
+
 ## 2026-10-25T03:39:39+05:30 — Configure ECHO Git previews and refresh demo handoff
 
 - Changed: created a separate ECHO Vercel project connected to UmarAlMukhtar/echo, with the Next.js preset, Node.js 24 and main as its production branch. Added preview setup/status links to README, and corrected SUBMISSION's stale implementation SHA, 49-test count and procedural-only asset claim. Updated integration verification and AI usage with actual access/setup evidence.

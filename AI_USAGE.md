@@ -49,3 +49,9 @@ This preparation is separate from participant project implementation and partici
 - Tool: Codex, using the owner's signed-in Vercel browser after the connector continued to reject team scope with 403 despite consent.
 - Contribution: created the separate ECHO project, connected its existing GitHub repository, configured Next.js/Node.js 24 and confirmed main as the production branch. Canceled a manual build that Vercel classified as Production despite its Preview action label. Prepared Git preview instructions and corrected stale submission art/test/SHA information. No application code or php2shell-live changes.
 - Validation: settings and cancellation were observed in Vercel; documentation whitespace/link checks. Hosted gameplay verification remains a separate next step. Human review and event submission remain pending; no merge.
+
+## Hosted verification and public demo — 2026-10-25T03:47:29+05:30
+
+- Tool: Codex, local repository and browser. Vercel Git built preview `590b8e96676c3df5146fd365d5031abb524eb0cf`; no application change was needed.
+- Contribution: verified the hosted model/controller/puzzle/save/guided flow through THE CITY REMEMBERS and returned to 3D; checked browser warnings/errors. After explicit owner approval, added an exception for only the delivered immutable preview hostname. Anonymous HTML/model requests verified public access and exact model hashes. Updated README, SUBMISSION and verification evidence; human review remains pending and PR #3 is unmerged.
+- Validation: hosted build Ready in 59 seconds, real UI/keyboard flow and save/reload, empty browser warnings/errors, anonymous HTTP 200/checksums, documentation diff/link checks. No new game-code changes; prior 74 tests/lint/typecheck/local production build remain applicable. No physical device checks or event submission.
