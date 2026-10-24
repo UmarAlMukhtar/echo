@@ -7,7 +7,7 @@ Complete this file during the hackathon and use it to prepare your submission th
 - **Project name:** ECHO: The City That Remembers
 - **Short description:** A ~10-minute 3D architectural puzzle-mystery in a floating pale-stone canal district. Rotate relay joints to route a visible signal beam across the causeways it energizes, reach three memory platforms, hear three conflicting memories of a disappearance, then make three decisions that visibly reshape the city — leading to one of three endings. Runs in the browser — includes a no-WebGL guided story mode.
 - **Code repository URL:** https://github.com/UmarAlMukhtar/echo
-- **Final submitted implementation commit SHA:** `9427abceffc58b93364d8a079bd49f21a6344b0f` (branch `devin/echo-vertical-slice`)
+- **Final submitted implementation commit SHA:** `c779687951db6b567eb18ba223660ca096c1afcf` (branch `devin/echo-vertical-slice`)
 - **Working demo URL or local demo steps:** `npm install && npm run dev`, then open http://localhost:3000. (Preview deployment URL: TODO if a deploy is configured.)
 - **Demo access requirements:** A modern browser. WebGL recommended; a fully playable Guided Story Mode covers no-WebGL, touch, and keyboard-only play. No accounts, keys, or services needed.
 
