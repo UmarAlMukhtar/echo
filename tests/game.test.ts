@@ -339,6 +339,35 @@ describe("save validation (v2)", () => {
     expect(data?.talkedTo).toEqual(["mirai"]);
   });
 
+  it("rejects a saved point inside a solid obstacle", () => {
+    const s = { ...goodSave(), playerPos: [0, 0] }; // relay plinth
+    const v = validateSave(s);
+    expect(v).not.toBeNull();
+    expect(isWalkable(v!.playerPos[0], v!.playerPos[1], v!.joints)).toBe(true);
+    expect(connectedToPlaza(v!.playerPos[0], v!.playerPos[1], v!.joints)).toBe(
+      true
+    );
+  });
+
+  it("rejects non-boolean or premature reachedEnding", () => {
+    expect(
+      validateSave({ ...goodSave(), reachedEnding: "yes" })
+    ).toBeNull();
+    // true without all three decisions — impossible progress
+    expect(
+      validateSave({ ...goodSave(), reachedEnding: true })
+    ).toBeNull();
+    expect(
+      validateSave({
+        ...goodSave(),
+        talkedTo: ["mirai", "devi", "ilyas"],
+        fragments: ["tide", "lantern", "rain"],
+        decisions: { retain: true, serve: false, control: true },
+        reachedEnding: true,
+      })
+    ).not.toBeNull();
+  });
+
   it("defaults reachedEnding to false and round-trips it when set", () => {
     expect(validateSave(goodSave())?.reachedEnding).toBe(false);
     const st = memStorage();

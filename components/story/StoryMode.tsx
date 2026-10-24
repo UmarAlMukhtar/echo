@@ -96,6 +96,11 @@ export default function StoryMode() {
             </button>
           </div>
         </div>
+        {s.lastNotice && (
+          <div className="story-notice" role="status">
+            {s.lastNotice}
+          </div>
+        )}
         <div className="story-scene">
           <b>{here.name}.</b> {here.desc}
         </div>

@@ -1,6 +1,6 @@
 import type { DecisionId, Decisions, FragmentId, NpcId } from "./types";
 import { DECISION_OWNER, SPAWN } from "./story";
-import { PLAZA_SAFE, connectedToPlaza } from "./city";
+import { PLAZA_SAFE, connectedToPlaza, isWalkable } from "./city";
 import {
   JOINT_IDS,
   initialJoints,
@@ -59,15 +59,21 @@ function validateJoints(raw: unknown): JointRotations | null {
   return joints;
 }
 
-/** Normalize a saved position onto floor connected to the plaza. */
+/**
+ * Normalize a saved position onto walkable floor connected to the plaza —
+ * a point inside a solid obstacle can connect but can never be walked out
+ * of, so both conditions are required.
+ */
 function normalizePosition(
   x: number,
   z: number,
   joints: JointRotations
 ): [number, number] {
-  if (connectedToPlaza(x, z, joints)) return [x, z];
+  const usable = (px: number, pz: number) =>
+    isWalkable(px, pz, joints) && connectedToPlaza(px, pz, joints);
+  if (usable(x, z)) return [x, z];
   const [sx, sz] = PLAZA_SAFE;
-  if (connectedToPlaza(sx, sz, joints)) return [sx, sz];
+  if (usable(sx, sz)) return [sx, sz];
   return [...SPAWN];
 }
 
@@ -111,6 +117,15 @@ export function validateSave(raw: unknown): SaveData | null {
   if (decisions.serve !== undefined && decisions.retain === undefined)
     return null;
   if (decisions.control !== undefined && decisions.serve === undefined)
+    return null;
+  // reachedEnding: absent defaults false (older v2 saves); a present value
+  // must be boolean, and true only with all three decisions made.
+  if (s.reachedEnding !== undefined && typeof s.reachedEnding !== "boolean")
+    return null;
+  if (
+    s.reachedEnding === true &&
+    DECISION_IDS.some((id) => decisions[id] === undefined)
+  )
     return null;
   if (
     !Array.isArray(s.playerPos) ||
