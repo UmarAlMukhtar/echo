@@ -98,7 +98,7 @@ silently.
 
 ## Accessibility & comfort
 
-- Reduced-motion toggle (+ OS preference): halts orbits, bobbing, sparks.
+- Reduced-motion toggle (+ OS preference): halts decorative orbits, sparks and idle sway; essential walking legs/arms remain animated with a calmer step rhythm.
 - Guided story mode is a complete equivalent path — every action, every
   decision, every ending.
 - All critical info is text or geometry; no audio is required anywhere.

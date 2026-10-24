@@ -55,3 +55,9 @@ This preparation is separate from participant project implementation and partici
 - Tool: Codex, local repository and browser. Vercel Git built preview `590b8e96676c3df5146fd365d5031abb524eb0cf`; no application change was needed.
 - Contribution: verified the hosted model/controller/puzzle/save/guided flow through THE CITY REMEMBERS and returned to 3D; checked browser warnings/errors. After explicit owner approval, added an exception for only the delivered immutable preview hostname. Anonymous HTML/model requests verified public access and exact model hashes. Updated README, SUBMISSION and verification evidence; human review remains pending and PR #3 is unmerged.
 - Validation: hosted build Ready in 59 seconds, real UI/keyboard flow and save/reload, empty browser warnings/errors, anonymous HTTP 200/checksums, documentation diff/link checks. No new game-code changes; prior 74 tests/lint/typecheck/local production build remain applicable. No physical device checks or event submission.
+
+## Walking animation polish — 2026-10-25T04:11:13+05:30
+
+- Tool: Codex, local implementation after the owner approved the short animation design. No Devin calls.
+- Contribution: corrected Reduced Motion freezing all skeletal motion, retimed the existing Walk clip for a brisker normal gait and calmer reduced gait, and kept normal idle breathing/lantern sway with a quiet stopped reduced pose. Updated real-GLB regression tests and animation documentation; no asset file, controller, collision, puzzle or save schema changes.
+- Validation: watched the frozen-walk and cadence tests fail before the fix; 77 tests, typecheck, lint and production build passed. Actual production-browser keys and captured frames show feet stepping in both modes; pause, relay interaction, reload/Continue and guided→3D worked without browser warnings/errors. Hosted publication is separate from these local checks; human review remains pending.

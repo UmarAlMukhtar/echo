@@ -59,7 +59,10 @@ not disposed by individual actors. Player materials and vertex colors are kept.
 Idle (2.4 s) and Walk (1 s) repeat with short crossfades. An interaction counter
 starts the 1.2 s Interact clip once, then returns to Idle/Walk. No root motion
 moves the controller. A remount ignores old interaction events. Reduced motion
-freezes a quiet Idle pose. Imported map materials are cloned before choice tint
+keeps the authored Walk running at 1× while moving, with a quiet neutral Idle
+pose when stopped. Normal motion plays Walk at 1.8× for a brisker step rhythm
+and keeps the authored Idle breathing and scarf/lantern sway. Essential footstep
+feedback remains visible when the OS requests less motion. Imported map materials are cloned before choice tint
 changes so cached assets are not globally recolored.
 
 ## Saves, fallback and limits

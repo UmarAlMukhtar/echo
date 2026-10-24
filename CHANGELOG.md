@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-10-25T04:11:13+05:30 — Make keeper footsteps visible and quicken the normal gait
+
+- Changed: `lib/game/keeper-animation.ts` now plays Walk while moving even under Reduced Motion. Normal cadence is 1.8×; reduced cadence is 1× with a neutral still pose when stopped. Existing authored breathing, scarf/lantern sway and one-shot interactions are reused. Added real-GLB leg/arm movement, cadence and quiet-pose tests and updated README/design/integration/AI usage documentation.
+- Why: OS Reduced Motion selected Idle and froze the mixer, making the keeper slide without stepping. The owner approved visible leg/arm movement with a calmer reduced-motion variant.
+- Validation: test-first failures reproduced the freeze and absent cadence; 77 tests, typecheck, lint and production build pass. Local production browser held-key frames show both walking modes; relay interaction, pause movement blocking, save/reload and guided→3D remount passed with no browser warnings/errors.
+- Limits: no GLB, movement controller, collision, puzzle or save changes. Hosted preview publication is checked separately; no physical mobile/gamepad testing and no merge.
+
 ## 2026-10-25T03:47:29+05:30 — Verify and publish the scoped ECHO preview
 
 - Changed: recorded the working public demo URL and exact deployment SHA in README, SUBMISSION and integration verification; added actual hosted-check and owner-approval evidence to AI_USAGE.

@@ -42,8 +42,11 @@ export function createKeeperAnimation(root: Object3D, clips: AnimationClip[]) {
       lastInteraction = interaction;
       if (reduced) remaining = 0;
       if (remaining <= 0)
-        play(!reduced && moving ? "Walk" : "Idle", reduced ? 0 : 0.15);
-      mixer.update(reduced ? 0 : dt);
+        play(moving ? "Walk" : "Idle", reduced ? 0 : 0.15);
+      // Footsteps communicate movement; reduced motion suppresses idle sway.
+      actions.Walk.setEffectiveTimeScale(reduced ? 1 : 1.8);
+      if (reduced && !moving) actions.Idle.time = 0;
+      mixer.update(reduced && !moving ? 0 : dt);
       remaining = Math.max(0, remaining - dt);
     },
     dispose() {

@@ -99,7 +99,10 @@ controller changes and migration details: [asset integration](docs/assets/README
 - The six joint controls remain reversible; pause/guided reset returns an isolated
   player to the plaza. The final overlook is at the south plaza edge.
 - The player uses in-place `Idle`, `Walk` and one-shot `Interact`; WASD still moves
-  the parent and camera. Reduced motion holds a quiet idle pose.
+  the parent and camera. Walking now has visible leg steps and arm swing even
+  with Reduced Motion enabled. Normal mode uses a brisker gait plus gentle
+  authored breathing/lantern sway; Reduced Motion keeps a calmer walk and a
+  still stance when stopped.
 - v2 saves retain fragments, conversations, choices and ending progress. Dock
   rotations adapt to the east-facing route, and old coordinates return to entry.
   v3 saves retain their current valid position, including raised platforms.
