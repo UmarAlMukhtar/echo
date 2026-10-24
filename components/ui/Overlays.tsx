@@ -136,6 +136,7 @@ function RevealOverlay() {
 function DecisionOverlay({ id }: { id: DecisionId }) {
   const d = DECISIONS[id];
   const applyDecision = useGameStore((s) => s.applyDecision);
+  const closeDecision = useGameStore((s) => s.closeDecision);
   const setNotice = useGameStore((s) => s.setNotice);
   const [chosen, setChosen] = useState<null | { label: string; consequence: string; flag: boolean }>(null);
 
@@ -146,7 +147,7 @@ function DecisionOverlay({ id }: { id: DecisionId }) {
 
   const close = () => {
     setNotice(null);
-    useGameStore.getState().resume();
+    closeDecision();
   };
 
   return (

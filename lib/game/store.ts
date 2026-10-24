@@ -68,6 +68,7 @@ export interface GameState {
   closeReveal: () => void;
   openDecision: (id: DecisionId) => void;
   applyDecision: (id: DecisionId, flag: boolean) => void;
+  closeDecision: () => void;
   openEnding: () => void;
   dismissEnding: () => void;
   pause: () => void;
@@ -286,16 +287,22 @@ export const useGameStore = create<GameState>((set, get) => ({
     const decisions = { ...s.decisions, [id]: flag };
     const ending = computeEnding(decisions);
     const next = { ...s, decisions };
-    // Chain straight into a pending decision whose resident was already
-    // heard (e.g. when stages were finished out of order).
-    const pending = pendingDecision(next);
+    // Keep the decision panel up — its consequence text stays visible
+    // until Continue, and closeDecision() then chains pending ones.
     set({
       decisions,
       ending,
-      overlay: pending ? overlayForDecision(pending) : null,
       objective: currentObjective(next),
     });
     persist(get());
+  },
+
+  closeDecision: () => {
+    const s = get();
+    // Chain into the pending decision whose resident was already heard
+    // (e.g. when stages were finished out of order), else close.
+    const pending = pendingDecision(s);
+    set({ overlay: pending ? overlayForDecision(pending) : null });
   },
 
   openEnding: () => {

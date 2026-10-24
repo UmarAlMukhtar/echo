@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useGameStore } from "@/lib/game/store";
 import { GAME_SUBTITLE, GAME_TITLE } from "@/lib/game/story";
 
@@ -12,6 +13,7 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
   const setReducedMotion = useGameStore((s) => s.setReducedMotion);
   const mode = useGameStore((s) => s.mode);
   const setMode = useGameStore((s) => s.setMode);
+  const [confirmNew, setConfirmNew] = useState(false);
 
   return (
     <div className="title-screen">
@@ -19,18 +21,42 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
         <div className="subtitle">{GAME_SUBTITLE}</div>
         <h1>{GAME_TITLE}</h1>
         <p className="tagline">
-          A flooded canal district. A keeper who vanished. Three memories that
-          disagree. Recover the signal — then decide what a city is allowed to
-          forget.
+          A flooded canal district suspended in mist. Turn the relay joints,
+          carry the signal across the causeways to three memory platforms,
+          hear what each resident remembers — then decide what a city is
+          allowed to forget.
         </p>
         <div className="title-menu" role="menu" aria-label="Main menu">
-          <button
-            className="btn primary"
-            autoFocus
-            onClick={() => newGame(webglOk ? mode : "story")}
-          >
-            New game
-          </button>
+          {!(hasSave && confirmNew) && (
+            <button
+              className="btn primary"
+              autoFocus
+              onClick={() =>
+                hasSave ? setConfirmNew(true) : newGame(webglOk ? mode : "story")
+              }
+            >
+              New game
+            </button>
+          )}
+          {hasSave && confirmNew && (
+            <div role="group" aria-label="Confirm new game">
+              <p className="dim">
+                Start over? Your saved journey will be overwritten.
+              </p>
+              <div className="button-row">
+                <button
+                  className="btn primary"
+                  autoFocus
+                  onClick={() => newGame(webglOk ? mode : "story")}
+                >
+                  Start over
+                </button>
+                <button className="btn" onClick={() => setConfirmNew(false)}>
+                  Keep save
+                </button>
+              </div>
+            </div>
+          )}
           {hasSave && (
             <button className="btn" onClick={continueGame}>
               Continue

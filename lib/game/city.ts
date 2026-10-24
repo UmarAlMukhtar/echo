@@ -72,13 +72,6 @@ export const OBSTACLES: Rect[] = [
   { x0: -0.6, z0: -11.9, x1: 0.6, z1: -10.9 },
 ];
 
-/** Tall structures that can block the camera ray — used for clearance. */
-export const CAMERA_TALL: (Rect & { h: number })[] = [
-  { x0: -1.5, z0: -1.5, x1: 1.5, z1: 1.5, h: 13 }, // spire
-  { x0: -1.2, z0: 5.4, x1: 1.2, z1: 8, h: 5.4 }, // south arch
-  { x0: -1.2, z0: -8, x1: 1.2, z1: -5.4, h: 5.4 }, // north arch
-];
-
 /* --------------------------- Movement ------------------------------ */
 
 function allFloors(joints: JointRotations): FloorRect[] {
@@ -177,6 +170,29 @@ export const ARCHES: { x: number; z: number; w: number; h: number; axis: "x" | "
   { x: 0, z: -6.7, w: 2.6, h: 3.4, axis: "z" }, // north causeway
   { x: -11.6, z: -1.5, w: 2.2, h: 3.2, axis: "x" }, // garden gate
   { x: 10.4, z: -7.4, w: 2.2, h: 3.2, axis: "x" }, // archive gate
+];
+
+/** Tall structures that can block the camera ray — used for clearance.
+ *  Arches are open: only their columns + lintel slab block the view, so
+ *  the elevated camera keeps its overview through the arch opening. */
+export const CAMERA_TALL: (Rect & { h: number })[] = [
+  { x0: -1.5, z0: -1.5, x1: 1.5, z1: 1.5, h: 13 }, // relay spire
+  ...ARCHES.flatMap((a) => {
+    const half = a.w / 2;
+    const t = 0.35; // column half-width
+    if (a.axis === "z") {
+      // arch across a z-running causeway: columns offset in x
+      return [
+        { x0: a.x - half - t, z0: a.z - 0.4, x1: a.x - half + t, z1: a.z + 0.4, h: a.h },
+        { x0: a.x + half - t, z0: a.z - 0.4, x1: a.x + half + t, z1: a.z + 0.4, h: a.h },
+      ];
+    }
+    // arch across an x-running walkway: columns offset in z
+    return [
+      { x0: a.x - 0.4, z0: a.z - half - t, x1: a.x + 0.4, z1: a.z - half + t, h: a.h },
+      { x0: a.x - 0.4, z0: a.z + half - t, x1: a.x + 0.4, z1: a.z + half + t, h: a.h },
+    ];
+  }),
 ];
 
 /** Floating stair stacks receding into the void (decor). */

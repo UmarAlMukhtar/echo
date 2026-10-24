@@ -2,6 +2,13 @@
 
 Record each meaningful project change during the event, newest first. Update this file in the same commit as the change. Use a real timestamp with timezone, for example `YYYY-MM-DDTHH:MM:SS+05:30`.
 
+## 2026-10-24T17:25:00+00:00 — Redesign fixes: decision consequence, arch camera, title UX
+
+- Changed: Decision panels now keep their consequence text visible until the player presses Continue — `applyDecision` no longer clears the overlay; the new `closeDecision` store action chains into pending decisions afterward (regression test added). `CAMERA_TALL` now models only each arch's actual columns instead of a solid box over the opening, so the elevated camera keeps its overview when walking through causeway arches (verified the close-clamp bug is gone by geometry — columns sit at the arch edges only). Title screen tagline explains the architectural-puzzle premise; starting a New game over an existing save now asks for explicit confirmation before overwriting.
+- Why: Independent browser review on commit 31ce6e5 — consequence copy never rendered (panel dismissed instantly) and the south arch clamped the camera to the avatar.
+- Validation: `npx tsc --noEmit` clean, `npm run lint` clean, `npx vitest run` 49/49 passing; browser-verified decision flow via CDP: choice applied, panel text stays until Continue, save v2 restores joints on reload.
+- Limitations: Full three-stage real-input playthrough still in progress in the reviewer's browser; ornament polish pending.
+
 ## 2026-10-24T17:15:00+00:00 — Redesign: architectural signal puzzle, milestone 1
 
 - Changed: Reworked ECHO into an architectural puzzle game per the new visual direction (bright ivory/peach platforms, lilac shadow sides, mint atmosphere, teal signal accents, focal relay spire). Replaced the dial puzzle with a spatial signal-routing system: three escalating stages of rotatable relay joints (straight + elbow conductors), a visible beam that propagates emitter→joints→memory platform, and energized causeway tiles that literally rise into the walkway network. Movement is now floor-union walking with edge gaps, conventional camera-relative controls (fixes inverted W/A), an elevated ¾ camera with a clearance ray against tall structures, and a stranded-player catch (teleport to plaza, no softlocks). Decisions now weave through progression after each stage via the pending-decision chain; save format bumped to v2 with joint rotations and honest "outdated" handling of v1 saves; guided story mode rewired to the same joint/decision logic. Removed lib/game/puzzle.ts and Buildings.tsx; rewrote District/Relay/PlayerRig/StoryMode.

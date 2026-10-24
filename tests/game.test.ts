@@ -379,7 +379,36 @@ describe("game store", () => {
     useGameStore.getState().applyDecision("retain", true);
     const s = useGameStore.getState();
     expect(s.decisions.retain).toBe(true);
-    expect(s.overlay).toBeNull();
+    // consequence stays visible until Continue
+    expect(s.overlay).toEqual({ kind: "decision", id: "retain" });
+    useGameStore.getState().closeDecision();
+    expect(useGameStore.getState().overlay).toBeNull();
+  });
+
+  it("keeps the consequence panel until Continue, then chains pending decisions", () => {
+    useGameStore.getState().newGame("3d");
+    useGameStore.getState().resume();
+    // devi heard early — her decision becomes pending behind mirai's
+    useGameStore.getState().openDialogue("devi");
+    useGameStore.getState().closeDialogue();
+    useGameStore.getState().openDialogue("mirai");
+    useGameStore.getState().closeDialogue();
+    expect(useGameStore.getState().overlay).toEqual({
+      kind: "decision",
+      id: "retain",
+    });
+    useGameStore.getState().applyDecision("retain", true);
+    // the panel must NOT vanish or swap instantly — consequence is shown
+    expect(useGameStore.getState().overlay).toEqual({
+      kind: "decision",
+      id: "retain",
+    });
+    // Continue chains into devi's pending decision
+    useGameStore.getState().closeDecision();
+    expect(useGameStore.getState().overlay).toEqual({
+      kind: "decision",
+      id: "serve",
+    });
   });
 
   it("an out-of-order resident waits for the pending decision", () => {
@@ -389,10 +418,11 @@ describe("game store", () => {
     useGameStore.getState().closeDialogue();
     expect(useGameStore.getState().overlay).toBeNull();
     expect(useGameStore.getState().decisions.serve).toBeUndefined();
-    // once mirai's decision is made, devi's chains immediately
+    // once mirai's decision is made and confirmed, devi's chains
     useGameStore.getState().openDialogue("mirai");
     useGameStore.getState().closeDialogue();
     useGameStore.getState().applyDecision("retain", false);
+    useGameStore.getState().closeDecision();
     expect(useGameStore.getState().overlay).toEqual({
       kind: "decision",
       id: "serve",
@@ -405,7 +435,9 @@ describe("game store", () => {
       useGameStore.getState().openDialogue(n);
     useGameStore.getState().closeDialogue();
     useGameStore.getState().applyDecision("retain", true);
+    useGameStore.getState().closeDecision();
     useGameStore.getState().applyDecision("serve", true);
+    useGameStore.getState().closeDecision();
     expect(useGameStore.getState().overlay).toEqual({ kind: "reveal" });
     useGameStore.getState().closeReveal();
     expect(useGameStore.getState().overlay).toEqual({
@@ -414,6 +446,8 @@ describe("game store", () => {
     });
     useGameStore.getState().applyDecision("control", true);
     expect(useGameStore.getState().ending).toBe("remembers");
+    useGameStore.getState().closeDecision();
+    expect(useGameStore.getState().overlay).toBeNull();
   });
 
   it("the overlook is only interactable after all three decisions", () => {
@@ -431,6 +465,7 @@ describe("game store", () => {
     useGameStore.getState().openDialogue("mirai");
     useGameStore.getState().closeDialogue();
     useGameStore.getState().applyDecision("retain", true);
+    useGameStore.getState().closeDecision();
     useGameStore.getState().rotateJoint("j2a");
     useGameStore.getState().rotateJoint("j2b");
     useGameStore.getState().rotateJoint("j2b");
@@ -441,6 +476,7 @@ describe("game store", () => {
     useGameStore.getState().openDialogue("devi");
     useGameStore.getState().closeDialogue();
     useGameStore.getState().applyDecision("serve", false);
+    useGameStore.getState().closeDecision();
     useGameStore.getState().rotateJoint("j3a");
     useGameStore.getState().rotateJoint("j3a");
     useGameStore.getState().rotateJoint("j3a");
@@ -455,6 +491,7 @@ describe("game store", () => {
     useGameStore.getState().closeDialogue(); // -> reveal
     useGameStore.getState().closeReveal(); // -> control
     useGameStore.getState().applyDecision("control", false);
+    useGameStore.getState().closeDecision();
     const s = useGameStore.getState();
     expect(s.ending).toBe("watcher");
     expect(s.objective).toContain("overlook");
