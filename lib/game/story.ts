@@ -51,7 +51,7 @@ export const NPCS: Record<NpcId, NpcContent> = {
       "The night of the flood he carried no weapon, only a lantern and the archive key. A deserter packs light. He stayed.",
       "Take this. It is the tide-fragment he left with me — the first voice of the relay. He told me: *the tide was still rising when the water took the quarter.* Hold it to that.",
     ],
-    clue: "Tide fragment — Mirai: \"the tide was still rising when the water took the quarter.\"",
+    clue: 'Tide fragment — Mirai: "the tide was still rising when the water took the quarter."',
     again: [
       "The relay waits for three voices, cartographer. Devi's lantern and Ilyas's rain will sing with mine.",
       "He stayed. Whatever the sealed record says, remember I measured the hum.",
@@ -65,7 +65,7 @@ export const NPCS: Record<NpcId, NpcContent> = {
   devi: {
     id: "devi",
     name: "Devi Nair",
-    role: "Ferry operator, west dock",
+    role: "Ferry operator, east dock",
     accent: "#f2b84b",
     firstMeeting: [
       "Mind the edge — the canal keeps what it catches. Like it kept Arjun, maybe.",
@@ -74,7 +74,7 @@ export const NPCS: Record<NpcId, NpcContent> = {
       "But here's the thing that never sat right: *his lantern burned at the harbor until the very end.* I watched it from this dock. Runners don't leave their light on.",
       "This lantern-fragment is his fare, unpaid all these years. Take it to the relay and let the machine decide what he was.",
     ],
-    clue: "Lantern fragment — Devi: \"his lantern burned at the harbor until the very end.\"",
+    clue: 'Lantern fragment — Devi: "his lantern burned at the harbor until the very end."',
     again: [
       "The lock remembers every gate I ever closed. Ask Ilyas about the rain that night — engineers keep honest hours.",
       "A runner pays double and leaves no light. I keep turning that over.",
@@ -97,7 +97,7 @@ export const NPCS: Record<NpcId, NpcContent> = {
       "It worked. The district's own pipes and cables became the vault. Then he sent me down and stayed to hold the gate.",
       "One detail for your collection: *the rain had already stopped when we overloaded the relay.* The water kept rising anyway — that was the surge, not the storm. Take the rain-fragment. It's the only honest thing I own.",
     ],
-    clue: "Rain fragment — Ilyas: \"the rain had already stopped when we overloaded the relay.\"",
+    clue: 'Rain fragment — Ilyas: "the rain had already stopped when we overloaded the relay."',
     again: [
       "Three fragments make one voice. Mirai keeps the tide. Devi keeps the light.",
       "We hid the archive inside the district itself. He stayed to hold the gate. Write it down that way.",
@@ -120,7 +120,7 @@ export const NPCS: Record<NpcId, NpcContent> = {
 export function pickDialogueLines(
   npc: NpcContent,
   repeatVisit: boolean,
-  revealed: boolean
+  revealed: boolean,
 ): string[] {
   if (!repeatVisit) return npc.firstMeeting;
   return revealed ? npc.afterRelay : npc.again;
@@ -292,13 +292,13 @@ export function computeEnding(decisions: Decisions): EndingId | null {
 
 /* ----------------------- World / interactables --------------------- */
 
-export const SPAWN: [number, number] = [0, 11.5];
+export const SPAWN: [number, number] = [0, 3.8];
 
 export const NPC_INTERACTABLES: Record<NpcId, InteractableSpec> = {
   mirai: {
     id: "npc-mirai",
     kind: "npc",
-    position: [-12.6, -1.5],
+    position: [-12.9, 0.8],
     radius: 2.6,
     label: "Mirai Okafor",
     prompt: "Talk to Mirai",
@@ -306,7 +306,7 @@ export const NPC_INTERACTABLES: Record<NpcId, InteractableSpec> = {
   devi: {
     id: "npc-devi",
     kind: "npc",
-    position: [-12.8, 7.6],
+    position: [12, 1],
     radius: 2.6,
     label: "Devi Nair",
     prompt: "Talk to Devi",
@@ -314,7 +314,7 @@ export const NPC_INTERACTABLES: Record<NpcId, InteractableSpec> = {
   ilyas: {
     id: "npc-ilyas",
     kind: "npc",
-    position: [12.2, -7.2],
+    position: [0, -11.5],
     radius: 2.6,
     label: "Ilyas Rahman",
     prompt: "Talk to Ilyas",
@@ -328,13 +328,13 @@ export const JOINT_INTERACTABLES: InteractableSpec[] = JOINT_DEFS.map((j) => ({
   position: j.pos,
   radius: 2.5,
   label: "Relay joint",
-  prompt: "Turn the relay joint",
+  prompt: `Turn relay joint (${j.id})`,
 }));
 
 export const OVERLOOK_INTERACTABLE: InteractableSpec = {
   id: "overlook",
   kind: "overlook",
-  position: [0, -11.4],
+  position: [0, 3.8],
   radius: 2.8,
   label: "Overlook",
   prompt: "Let the city speak",
@@ -350,16 +350,17 @@ export const DECISION_OWNER: Record<DecisionId, NpcId> = {
 /* --------------------------- Objectives ---------------------------- */
 
 export const OBJECTIVES = {
-  alignGarden: "Turn relay joints to carry the signal west to the garden platform",
+  alignGarden:
+    "Turn relay joints to carry the signal west to the garden platform",
   talkMirai: "Cross the energized causeway and speak with Mirai",
   decideRetain: "The relay asks what the city should keep",
-  alignDock: "Route the signal around to the dock platform, south-west",
+  alignDock: "Route the signal around to the dock platform, east",
   talkDevi: "Cross to the dock and speak with Devi",
   decideServe: "The relay asks whom the grid should serve",
-  alignArchive: "Complete the long alignment east to the archive platform",
+  alignArchive: "Complete the long alignment north to the archive platform",
   talkIlyas: "Cross to the archive and speak with Ilyas",
   decideControl: "The relay asks who should hold the memory",
-  toOverlook: "Climb the north causeway to the overlook and let the city speak",
+  toOverlook: "Return to the south plaza overlook and let the city speak",
   wander: "Walk the city you made",
 };
 

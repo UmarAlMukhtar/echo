@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { playerRuntime, useGameStore } from "@/lib/game/store";
 import { computeAllBeams } from "@/lib/game/signal";
+import SceneBoundary from "@/components/scene/SceneBoundary";
 import TitleScreen from "@/components/ui/TitleScreen";
 import Hud from "@/components/ui/Hud";
 import Overlays from "@/components/ui/Overlays";
@@ -77,7 +78,7 @@ export default function GameShell() {
     })();
     if (!storage) {
       setNotice(
-        "Local saves are unavailable in this browser — progress won't persist between visits."
+        "Local saves are unavailable in this browser — progress won't persist between visits.",
       );
     }
   }, [setNotice]);
@@ -102,21 +103,39 @@ export default function GameShell() {
   return (
     <div className="game-root">
       {!useStory && (
-        <CityScene
-          key={sceneKey}
-          onReady={() => setSceneError(false)}
+        <SceneBoundary
           onError={() => {
-            setSceneError(true);
-            // Only a real loss while the 3D view is live switches modes;
-            // context disposal on an intentional unmount (mode already
-            // "story", or quitting to title) stays silent here.
-            const s = useGameStore.getState();
-            if (s.mode === "3d" && s.phase !== "title") {
-              s.setMode("story");
-              s.setNotice("3D view lost — switched to Guided Story Mode.");
-            }
+            // CityScene is already loaded when a model fails; clear its rejected
+            // GLB entries before the next Return-to-3D mount can reuse them.
+            void import("@/components/scene/CityScene")
+              .then(({ clearModelCache }) => clearModelCache())
+              .catch(() =>
+                setNotice(
+                  "3D could not load. Reload the page to retry; guided play remains available.",
+                ),
+              );
+            setMode("story");
+            setNotice(
+              "3D assets could not load — Guided Story Mode is available. Return to 3D to retry.",
+            );
           }}
-        />
+        >
+          <CityScene
+            key={sceneKey}
+            onReady={() => setSceneError(false)}
+            onError={() => {
+              setSceneError(true);
+              // Only a real loss while the 3D view is live switches modes;
+              // context disposal on an intentional unmount (mode already
+              // "story", or quitting to title) stays silent here.
+              const s = useGameStore.getState();
+              if (s.mode === "3d" && s.phase !== "title") {
+                s.setMode("story");
+                s.setNotice("3D view lost — switched to Guided Story Mode.");
+              }
+            }}
+          />
+        </SceneBoundary>
       )}
       {useStory && phase !== "title" && <StoryMode />}
       {phase === "title" && <TitleScreen webglOk={webglOk !== false} />}

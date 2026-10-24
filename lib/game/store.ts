@@ -8,19 +8,12 @@ import {
   OBJECTIVES,
   computeEnding,
 } from "./story";
-import {
-  browserStorage,
-  clearSave,
-  loadSave,
-  writeSave,
-} from "./save";
-import {
-  PLAZA_SAFE,
-  connectedToPlaza,
-} from "./city";
+import { browserStorage, clearSave, loadSave, writeSave } from "./save";
+import { PLAZA_SAFE, connectedToPlaza } from "./city";
 import {
   computeAllBeams,
   initialJoints,
+  STAGE_BY_ID,
   jointReachable,
 } from "./signal";
 import type { JointId, JointRotations, StageId } from "./signal";
@@ -66,6 +59,7 @@ export interface GameState {
   openDialogue: (npcId: NpcId) => void;
   closeDialogue: () => void;
   rotateJoint: (id: JointId) => void;
+  resetStage: (id: StageId) => void;
   closeReveal: () => void;
   openDecision: (id: DecisionId) => void;
   applyDecision: (id: DecisionId, flag: boolean) => void;
@@ -86,6 +80,7 @@ export interface GameState {
 
 /** Mutable player position — kept outside reactive state (updated per frame). */
 export const playerRuntime = {
+  interaction: 0,
   pos: { x: SPAWN[0], z: SPAWN[1] },
 };
 
@@ -144,7 +139,7 @@ function persist(state: GameState): void {
       playerPos: [playerRuntime.pos.x, playerRuntime.pos.z],
       mode: state.mode,
     },
-    storage
+    storage,
   );
   // Reflect what actually landed in storage — a fresh run's first
   // milestone must turn on Continue and the title's overwrite guard.
@@ -259,7 +254,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   rotateJoint: (id) => {
     const s = get();
     const before = computeAllBeams(s.joints);
-    const joints: JointRotations = { ...s.joints, [id]: (s.joints[id] + 1) % 4 };
+    const joints: JointRotations = {
+      ...s.joints,
+      [id]: (s.joints[id] + 1) % 4,
+    };
     const after = computeAllBeams(joints);
 
     // If the rotation strands the player on a disconnected island, the
@@ -273,7 +271,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
 
     const newlyReached = (["stage1", "stage2", "stage3"] as StageId[]).filter(
-      (sid) => !before[sid].reached && after[sid].reached
+      (sid) => !before[sid].reached && after[sid].reached,
     );
     let notice = s.lastNotice;
     if (stranded) notice = "The causeway folds — the plaza catches you.";
@@ -285,6 +283,25 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     const next = { ...s, joints };
     set({ joints, objective: currentObjective(next), lastNotice: notice });
+    persist(get());
+  },
+
+  resetStage: (id) => {
+    const s = get();
+    const joints = { ...s.joints };
+    for (const joint of STAGE_BY_ID.get(id)!.joints)
+      joints[joint.id] = joint.init;
+    const stranded = !connectedToPlaza(
+      playerRuntime.pos.x,
+      playerRuntime.pos.z,
+      joints,
+    );
+    if (stranded) playerRuntime.pos = { x: PLAZA_SAFE[0], z: PLAZA_SAFE[1] };
+    set({
+      joints,
+      objective: currentObjective({ ...s, joints }),
+      lastNotice: `${STAGE_BY_ID.get(id)!.label} reset.${stranded ? " The plaza catches you." : ""}`,
+    });
     persist(get());
   },
 
@@ -391,6 +408,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   interact: (spec) => {
+    playerRuntime.interaction += 1;
     const s = get();
     switch (spec.kind) {
       case "npc":
@@ -425,7 +443,7 @@ export function activeInteractables(s: {
     // Match guided mode's gating: a joint only prompts when its pedestal
     // is actually powered/reachable (reset still turns any joint directly).
     ...JOINT_INTERACTABLES.filter((it) =>
-      jointReachable(it.id as JointId, s.joints)
+      jointReachable(it.id as JointId, s.joints),
     ),
   ];
   if (s.decisions.control !== undefined) list.push(OVERLOOK_INTERACTABLE);

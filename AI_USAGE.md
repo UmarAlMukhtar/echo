@@ -33,3 +33,11 @@ This preparation is separate from participant project implementation and partici
 - Human review: pending maintainer review of this pull request.
 - Validation: documentation diff, whitespace, and local Markdown link checks;
   no application code changed and no runtime checks were needed.
+
+## Blender application integration — 2026-10-25T02:15:58+05:30
+
+- Tool: Codex, running locally; one independent Codex code review. No new Devin agent calls. The previous Devin monitor was deleted at the user's request to stop using its exhausted quota.
+- Task: integrate the approved map and animated keeper from the supplied immutable Git commits into the latest pushed gameplay branch (base `358d5cbc4fbee6ad4b0181a5c8e05808f5dbdfb6`).
+- Contribution: runtime imports/provenance, derived collider manifest, raised-route navigation, bridge gates, new joint/NPC layout, skeleton animation/lifecycle, save migration, reset feedback, model-error fallback/retry and corresponding tests/docs. No php2shell-live changes and no automatic merge.
+- Corrections from actual checks: fixed Strict Mode reuse of a disposed mixer, removed a problematic in-Canvas HTML loading portal, made stage reset atomic so its final feedback is truthful, and cleared rejected GLB cache entries after the independent review found retry reused the error.
+- Verification: real UI/WASD/E browser playthrough plus automated project checks; see [integration verification](docs/assets/VERIFICATION.md). Human design/code review remains pending; automated review is not human approval.

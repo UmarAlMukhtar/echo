@@ -4,6 +4,8 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGameStore } from "@/lib/game/store";
+import { floorHeight } from "@/lib/game/city";
+import { initialJoints } from "@/lib/game/signal";
 import { NPC_INTERACTABLES } from "@/lib/game/story";
 import {
   JOINT_BY_ID,
@@ -12,57 +14,6 @@ import {
 } from "@/lib/game/signal";
 import type { JointId, JointRotations, StageId } from "@/lib/game/signal";
 import type { NpcId } from "@/lib/game/types";
-
-/* ------------------------------ Player ----------------------------- */
-
-export function PlayerAvatar() {
-  const bob = useRef<THREE.Group>(null!);
-  useFrame((state) => {
-    const s = useGameStore.getState();
-    if (s.reducedMotion || !bob.current) return;
-    bob.current.position.y = Math.sin(state.clock.elapsedTime * 2.2) * 0.04;
-  });
-  return (
-    <group ref={bob}>
-      {/* legs */}
-      <mesh position={[-0.13, 0.32, 0]} castShadow>
-        <boxGeometry args={[0.16, 0.64, 0.18]} />
-        <meshStandardMaterial color="#1c2229" roughness={0.7} />
-      </mesh>
-      <mesh position={[0.13, 0.32, 0]} castShadow>
-        <boxGeometry args={[0.16, 0.64, 0.18]} />
-        <meshStandardMaterial color="#1c2229" roughness={0.7} />
-      </mesh>
-      {/* torso — cartographer's coat */}
-      <mesh position={[0, 0.95, 0]} castShadow>
-        <boxGeometry args={[0.52, 0.72, 0.3]} />
-        <meshStandardMaterial color="#31404c" roughness={0.65} />
-      </mesh>
-      {/* head + visor */}
-      <mesh position={[0, 1.5, 0]} castShadow>
-        <sphereGeometry args={[0.21, 16, 16]} />
-        <meshStandardMaterial color="#d8cdb8" roughness={0.5} />
-      </mesh>
-      <mesh position={[0, 1.53, 0.14]}>
-        <boxGeometry args={[0.3, 0.09, 0.12]} />
-        <meshStandardMaterial
-          color="#0b2a2a"
-          emissive="#4fd1c5"
-          emissiveIntensity={1.6}
-        />
-      </mesh>
-      {/* satchel beacon */}
-      <mesh position={[0.28, 0.95, -0.08]}>
-        <boxGeometry args={[0.1, 0.14, 0.1]} />
-        <meshStandardMaterial
-          color="#2a1f10"
-          emissive="#f2b84b"
-          emissiveIntensity={1.1}
-        />
-      </mesh>
-    </group>
-  );
-}
 
 /* -------------------------------- NPCs ----------------------------- */
 
@@ -82,7 +33,13 @@ function NpcAvatar({ id }: { id: NpcId }) {
     }
   });
   return (
-    <group position={[spec.position[0], 0, spec.position[1]]}>
+    <group
+      position={[
+        spec.position[0],
+        floorHeight(...spec.position, initialJoints()) ?? 0,
+        spec.position[1],
+      ]}
+    >
       <group ref={float}>
         {id === "mirai" && (
           <>
@@ -199,7 +156,7 @@ function markerActive(
     decisions: Record<string, boolean | undefined>;
     ending: string | null;
   },
-  id: string
+  id: string,
 ): boolean {
   if (id.startsWith("npc-")) {
     const npc = id.slice(4) as NpcId;

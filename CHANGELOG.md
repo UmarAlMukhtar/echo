@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-10-25T02:15:58+05:30 — Integrate approved Blender district and memory keeper
+
+- Changed: imported the three checksum-verified runtime GLBs and source integration notes; replaced procedural map/player visuals, kept the existing camera-relative controller, and added floor-height sampling from nine exported slab/ramp/deck surfaces and 64 collision proxies. Three named bridge parents share the exact gate offset used by navigation; NPC spawns match exported empties. Six joints use the new approved layout; stories, choices, three endings and guided mode remain.
+- Added: in-place Idle/Walk/one-shot Interact animation, skeleton clone and mount/cleanup-safe mixer lifecycle, per-stage reset with honest rescue feedback, v2→v3 save migration preserving narrative progress, failed-model fallback and rejected GLB cache clearing for retry. Imported materials are cloned before warm/cold choice changes. Removed the obsolete procedural relay and old skyline/floor data.
+- Why: integrate the user's approved original art without replacing ongoing gameplay. All implementation continued locally in Codex after Devin usage was exhausted; no new Devin work was requested.
+- Validation: baseline 61 tests passed. Full real-keyboard 3D playthrough crossed all three bridges/stairs, rotated all six joints, heard all three residents, made all-open choices and reached The City Remembers. Browser reload restored dock progress; guided reset rescued the player and returned to 3D. New navigation/asset/animation/migration/reset tests and focused transient-load retry regression cover the changed contracts. Final production checks and replay results are recorded in docs/assets/VERIFICATION.md.
+- Limitations: custom kinematic floor/obstacle navigation, no rigid-body/jump physics or moving-bridge riding; stairs use smooth collision wedges. Legacy coordinates restart at entry while story progress survives. Hosting is reported separately from local preview proof. Human review pending; no merge.
+
 ## 2026-10-24T17:58:00+00:00 — Failed milestone writes surface feedback
 
 - Changed: `lib/game/store.ts` — `persist` now uses `writeSave`'s result: when storage exists but the write throws, `lastNotice` becomes "Couldn't save progress — browser storage is unavailable." instead of silently reloading an older valid save and reporting `saveStatus:"ok"` as if the milestone persisted. The older save still keeps `hasSave`/`saveStatus` from what is actually stored, so Continue and the overwrite guard reflect reality. No storage at all stays covered by the startup banner rather than spamming every milestone.

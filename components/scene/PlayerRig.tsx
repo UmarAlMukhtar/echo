@@ -3,17 +3,15 @@
 import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { CAMERA_TALL, floorHeight, slideMove } from "@/lib/game/city";
 import {
-  CAMERA_TALL,
-  slideMove,
-} from "@/lib/game/city";
-import { activeInteractables, playerRuntime, useGameStore } from "@/lib/game/store";
-import { PlayerAvatar } from "./Characters";
+  activeInteractables,
+  playerRuntime,
+  useGameStore,
+} from "@/lib/game/store";
+import Keeper from "./Keeper";
 import { QuestMarker } from "./Characters";
-import {
-  JOINT_INTERACTABLES,
-  OVERLOOK_INTERACTABLE,
-} from "@/lib/game/story";
+import { JOINT_INTERACTABLES, OVERLOOK_INTERACTABLE } from "@/lib/game/story";
 
 const SPEED = 5.2;
 const CAM_DIST_DEFAULT = 11;
@@ -24,14 +22,15 @@ const PITCH_MAX = 1.15;
 function clearanceDist(
   px: number,
   pz: number,
+  py: number,
   yaw: number,
   pitch: number,
-  dist: number
+  dist: number,
 ): number {
   const sinY = Math.sin(yaw);
   const cosY = Math.cos(yaw);
   const cosP = Math.cos(pitch);
-  const baseY = 1.2;
+  const baseY = py + 1.2;
   for (let t = 0.22; t < 0.98; t += 0.06) {
     const x = px + sinY * cosP * dist * t;
     const z = pz + cosY * cosP * dist * t;
@@ -88,7 +87,7 @@ export default function PlayerRig() {
       cam.current.pitch = THREE.MathUtils.clamp(
         cam.current.pitch + (e.clientY - drag.current.y) * 0.004,
         PITCH_MIN,
-        PITCH_MAX
+        PITCH_MAX,
       );
       drag.current.x = e.clientX;
       drag.current.y = e.clientY;
@@ -98,7 +97,7 @@ export default function PlayerRig() {
       cam.current.dist = THREE.MathUtils.clamp(
         cam.current.dist + e.deltaY * 0.01,
         7,
-        16
+        16,
       );
     };
     window.addEventListener("keydown", down);
@@ -139,8 +138,8 @@ export default function PlayerRig() {
       const yaw = cam.current.yaw;
       // Camera looks at the player along (-sin yaw, -cos yaw); W moves
       // away from the camera, D moves screen-right at every orbit angle.
-      const dx = (-Math.sin(yaw) * (f / len)) + Math.cos(yaw) * (r / len);
-      const dz = (-Math.cos(yaw) * (f / len)) - Math.sin(yaw) * (r / len);
+      const dx = -Math.sin(yaw) * (f / len) + Math.cos(yaw) * (r / len);
+      const dz = -Math.cos(yaw) * (f / len) - Math.sin(yaw) * (r / len);
       vel.current.x = dx * SPEED;
       vel.current.z = dz * SPEED;
       facing.current = Math.atan2(dx, dz);
@@ -156,7 +155,11 @@ export default function PlayerRig() {
     slideMove(p, vel.current.x * clamped, vel.current.z * clamped, s.joints);
 
     if (group.current) {
-      group.current.position.set(p.x, 0, p.z);
+      group.current.position.set(
+        p.x,
+        floorHeight(p.x, p.z, s.joints) ?? 0,
+        p.z,
+      );
       let rot = facing.current - group.current.rotation.y;
       rot = Math.atan2(Math.sin(rot), Math.cos(rot));
       group.current.rotation.y += rot * Math.min(1, clamped * 12);
@@ -182,25 +185,43 @@ export default function PlayerRig() {
       camera.lookAt(0, 1.5, 0);
     } else {
       const { yaw, pitch } = cam.current;
-      const dist = clearanceDist(p.x, p.z, yaw, pitch, cam.current.dist);
+      const ground = floorHeight(p.x, p.z, s.joints) ?? 0;
+      const dist = clearanceDist(
+        p.x,
+        p.z,
+        ground,
+        yaw,
+        pitch,
+        cam.current.dist,
+      );
       const cx = p.x + Math.sin(yaw) * Math.cos(pitch) * dist;
       const cz = p.z + Math.cos(yaw) * Math.cos(pitch) * dist;
-      const cy = 1.2 + Math.sin(pitch) * dist;
+      const cy = ground + 1.2 + Math.sin(pitch) * dist;
       const lerp = s.reducedMotion ? 1 : Math.min(1, clamped * 6);
       camera.position.lerp(new THREE.Vector3(cx, cy, cz), lerp);
-      lookAt.current.lerp(new THREE.Vector3(p.x, 1.3, p.z), lerp);
+      lookAt.current.lerp(new THREE.Vector3(p.x, ground + 1.3, p.z), lerp);
       camera.lookAt(lookAt.current);
     }
   });
 
   return (
     <group>
-      <group ref={group} position={[playerRuntime.pos.x, 0, playerRuntime.pos.z]}>
-        <PlayerAvatar />
+      <group
+        ref={group}
+        position={[playerRuntime.pos.x, 0, playerRuntime.pos.z]}
+      >
+        <Keeper />
       </group>
       {/* joint + overlook markers */}
       {[...JOINT_INTERACTABLES, OVERLOOK_INTERACTABLE].map((it) => (
-        <group key={it.id} position={[it.position[0], 0, it.position[1]]}>
+        <group
+          key={it.id}
+          position={[
+            it.position[0],
+            floorHeight(...it.position, useGameStore.getState().joints) ?? 0,
+            it.position[1],
+          ]}
+        >
           <QuestMarker id={it.id} />
         </group>
       ))}

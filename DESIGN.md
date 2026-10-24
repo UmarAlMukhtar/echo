@@ -6,10 +6,10 @@ Built for Devin Hacks Kochi, Track 4 — MAKE ROOM FOR PLAY.
 
 1. **Architecture is the puzzle.** One compact floating district, one coherent
    spatial system: rotate relay joints so a visible signal beam carries through
-   causeways and energizes the tiles you actually walk on.
+   causeways and docks the bridges you actually walk on.
 2. **A city you can read at a glance.** Bright sculptural palette — ivory and
    peach faces, lilac shadow sides, mint-teal atmosphere with soft luminous
-   fog — and one unmistakable focal structure (the relay spire). Elevated
+   fog — and one unmistakable focal structure (the astrolabe relay). Elevated
    three-quarter camera with restrained drag orbit.
 3. **Three memories that disagree.** Each memory platform holds one resident
    whose fragment and written clue unlock a consequential decision — the
@@ -41,17 +41,18 @@ own infrastructure — the city is the vault.
   `elbow` (conducts two adjacent edges) — each rotatable in 90° steps by
   standing at its pedestal and pressing E (or its button in guided mode).
 - **The beam** propagates from a stage emitter, across straight lines through
-  each joint's two connected edges, to the memory platform. It is drawn in the
-  scene as a luminous teal bar, so the routing itself is visible feedback.
-- **Energized causeways.** Every traversed beam edge raises its causeway tile
-  into the walkable floor union (`energizedRects` → `isWalkable`). The bridge
-  you cross is the signal you just routed.
+  each joint's two connected edges, to its bridge receiver. It is drawn in the
+  scene as a luminous teal line, so the routing itself is visible feedback.
+- **Docking bridges.** A completed stage raises its named Blender bridge into
+  place. Its deck and rail collision proxies share the same parent offset through
+  `bridgeOffset`; the controller samples the actual exported floor planes and
+  smooth stair wedges. Upstream beam segments activate downstream controls.
 - **Progression gating.** A joint can only be turned once the beam has reached
   its pedestal (`jointReachable`), so stages teach then combine: stage 1 is a
   single turn; stage 2 chains two elbows; stage 3 interleaves an elbow, a
   straight, and a final elbow.
-- **Reversible, no softlocks.** Joints rotate freely in both directions;
-  breaking a connection folds its tiles away. If that ever strands the player
+- **Reversible, no softlocks.** Joints cycle freely through quarter turns;
+  breaking a connection parks its bridge below the route. If that ever strands the player
   off the plaza's floor island, they are caught back at the plaza with a
   notice. Guided mode exposes per-stage reset buttons.
 
@@ -72,14 +73,11 @@ unit-tested over all eight flag combinations.
 
 ## Architecture
 
-- `lib/game/` — pure logic: signal propagation (`signal.ts`), floor/collider
-  union (`city.ts`), story content, save schema v2, zustand store. No
-  React/three imports; fully unit-testable.
-- `components/scene/` — React Three Fiber scene: pale platforms and rising
-  energized tiles, beam bars, emitter obelisks, rotating joint pedestals, the
-  relay spire, arches/floating steps/pale skyline, and the three
-  decision-driven transformation groups (ghost quarter, lamp/floodlight
-  lighting, dispersed/sealed archive shards).
+- `lib/game/` — signal propagation, collider-derived floor heights and blockers,
+  story content, save schema v3, zustand store, and the Three.js animation driver.
+- `components/scene/` — imported map/player GLBs, beam lines and rotating joints,
+  resident avatars, camera-relative controller and decision-driven effects
+  (ghost quarter/cool sealed palette, warm grid/relay floodlights, shared shards/crown).
 - `components/ui/` — DOM overlays (title, HUD, dialogue, reveal, decisions,
   ending, pause). All keyboard-operable HTML controls.
 - `components/story/StoryMode.tsx` — guided mode: the same state machine
@@ -89,11 +87,12 @@ unit-tested over all eight flag combinations.
 
 ## Saves
 
-Versioned localStorage (`echo-save-v2`) storing fragments, residents heard,
+Versioned localStorage (`echo-save-v3`) storing fragments, residents heard,
 joint rotations, decisions, player position and mode. Validation rejects
 duplicates, impossible progress (decisions without their resident's talk,
 out-of-order decisions), malformed joint rotations, and normalizes positions
-that no longer connect to the plaza. A save from the earlier build
+that no longer connect to the plaza or lie inside an obstacle. v2 saves migrate
+progress and dock turn states to the new layout while resetting their old coordinates. A save from the earlier build
 (`echo-save-v1`) is reported as *outdated* and cleared — honestly, never
 silently.
 

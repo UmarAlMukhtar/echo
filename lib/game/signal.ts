@@ -4,10 +4,8 @@
  *  The relay emits a visible signal from emitters on the plaza edge.   *
  *  It travels node to node in straight, axis-aligned lines. Each node  *
  *  is a rotatable joint pedestal: straight pieces pass the beam        *
- *  through, elbows turn it ninety degrees. When the beam completes a   *
- *  segment between two nodes, the causeway tiles along it energize     *
- *  and become walkable — architecture is the puzzle state. When the    *
- *  beam reaches a stage's target platform, that stage is aligned.      *
+ *  through, elbows turn it ninety degrees. When the beam reaches its *
+ *  receiver, the named Blender bridge docks and becomes walkable.      *
  * ------------------------------------------------------------------ */
 
 /** Cardinal direction as an index: 0=N(-z), 1=E(+x), 2=S(+z), 3=W(-x). */
@@ -41,12 +39,6 @@ export interface JointDef {
   init: number;
 }
 
-export interface TileDef {
-  /** Directed edge "fromId>toId" whose traversal energizes this tile. */
-  edge: string;
-  rect: Rect;
-}
-
 export interface StageDef {
   id: StageId;
   label: string;
@@ -55,7 +47,6 @@ export interface StageDef {
   source: { pos: [number, number]; dir: Dir };
   joints: JointDef[];
   target: { pos: [number, number] };
-  tiles: TileDef[];
 }
 
 /* ------------------------------- Layout ---------------------------- */
@@ -65,82 +56,70 @@ export const STAGES: StageDef[] = [
     id: "stage1",
     label: "Garden signal",
     targetName: "garden platform",
-    source: { pos: [-5, -1.5], dir: 3 },
+    source: { pos: [-2.6, 0], dir: 3 },
     joints: [
       {
         id: "j1",
         stage: "stage1",
         kind: "straight",
-        pos: [-6.6, -1.5],
+        pos: [-4.4, 0],
         init: 0,
       },
     ],
-    target: { pos: [-11, -1.5] },
-    tiles: [
-      { edge: "j1>target", rect: { x0: -11, z0: -2.5, x1: -8.2, z1: -0.5 } },
-    ],
+    target: { pos: [-10, 0] },
   },
   {
     id: "stage2",
     label: "Dock signal",
     targetName: "dock platform",
-    source: { pos: [-5, 4.4], dir: 3 },
+    source: { pos: [2, -2.6], dir: 1 },
     joints: [
       {
         id: "j2a",
         stage: "stage2",
         kind: "elbow",
-        pos: [-6.4, 4.4],
-        init: 0,
+        pos: [4, -2.6],
+        init: 1,
       },
       {
         id: "j2b",
         stage: "stage2",
         kind: "elbow",
-        pos: [-6.4, 7.4],
-        init: 0,
+        pos: [4, 1],
+        init: 1,
       },
     ],
-    target: { pos: [-11.4, 7.4] },
-    tiles: [
-      { edge: "j2a>j2b", rect: { x0: -7.8, z0: 5.4, x1: -5.4, z1: 6.4 } },
-      { edge: "j2b>target", rect: { x0: -11.4, z0: 6.4, x1: -7.8, z1: 8.4 } },
-    ],
+    target: { pos: [9, 1] },
   },
   {
     id: "stage3",
     label: "Archive signal",
     targetName: "archive platform",
-    source: { pos: [5, -0.8], dir: 1 },
+    source: { pos: [-2.8, -2.4], dir: 1 },
     joints: [
       {
         id: "j3a",
         stage: "stage3",
         kind: "elbow",
-        pos: [6.4, -0.8],
+        pos: [-0.9, -2.4],
         init: 0,
       },
       {
         id: "j3b",
         stage: "stage3",
         kind: "straight",
-        pos: [6.4, -4.4],
+        pos: [-0.9, -4.1],
         init: 1,
       },
       {
         id: "j3c",
         stage: "stage3",
         kind: "elbow",
-        pos: [6.4, -7.4],
+        pos: [-0.9, -6.5],
         init: 2,
       },
     ],
-    target: { pos: [10.4, -7.4] },
-    tiles: [
-      { edge: "j3a>j3b", rect: { x0: 5.4, z0: -3.4, x1: 7.4, z1: -2 } },
-      { edge: "j3b>j3c", rect: { x0: 5.4, z0: -6.4, x1: 7.4, z1: -5.4 } },
-      { edge: "j3c>target", rect: { x0: 7.4, z0: -8.4, x1: 10.4, z1: -6.4 } },
-    ],
+    target: { pos: [0.9, -6.5] },
   },
 ];
 
@@ -153,12 +132,12 @@ export const STAGE_BY_ID = new Map(STAGES.map((s) => [s.id, s]));
 
 /** Edges a joint connects at the given rotation index (0-3). */
 export function jointEdges(kind: JointDef["kind"], rot: number): Dir[] {
-  const r = ((((rot % 4) + 4) % 4) as Dir);
+  const r = (((rot % 4) + 4) % 4) as Dir;
   if (kind === "straight") return r % 2 === 0 ? [0, 2] : [1, 3];
   return [r, ((r + 1) % 4) as Dir];
 }
 
-const opposite = (d: Dir): Dir => (((d + 2) % 4) as Dir);
+const opposite = (d: Dir): Dir => ((d + 2) % 4) as Dir;
 
 interface NodeHit {
   id: string;
@@ -167,7 +146,11 @@ interface NodeHit {
 }
 
 /** The next node lying on the ray from pos along dir, if any. */
-function nextNode(stage: StageDef, pos: [number, number], dir: Dir): NodeHit | null {
+function nextNode(
+  stage: StageDef,
+  pos: [number, number],
+  dir: Dir,
+): NodeHit | null {
   const [vx, vz] = DIR_VEC[dir];
   const nodes: { id: string; pos: [number, number] }[] = [
     ...stage.joints.map((j) => ({ id: j.id, pos: j.pos })),
@@ -198,7 +181,10 @@ export interface BeamResult {
   lastNode: string | null;
 }
 
-export function computeStage(stage: StageDef, joints: JointRotations): BeamResult {
+export function computeStage(
+  stage: StageDef,
+  joints: JointRotations,
+): BeamResult {
   const edges: string[] = [];
   const segments: BeamResult["segments"] = [];
   let pos = stage.source.pos;
@@ -212,7 +198,8 @@ export function computeStage(stage: StageDef, joints: JointRotations): BeamResul
     segments.push({ a: pos, b: hit.pos });
     prev = hit.id;
     lastNode = hit.id;
-    if (hit.id === "target") return { stage: stage.id, edges, segments, reached: true, lastNode };
+    if (hit.id === "target")
+      return { stage: stage.id, edges, segments, reached: true, lastNode };
     const joint = stage.joints.find((j) => j.id === hit.id)!;
     const conn = jointEdges(joint.kind, joints[joint.id]);
     const entry = opposite(dir);
@@ -224,7 +211,7 @@ export function computeStage(stage: StageDef, joints: JointRotations): BeamResul
 }
 
 export function computeAllBeams(
-  joints: JointRotations
+  joints: JointRotations,
 ): Record<StageId, BeamResult> {
   return {
     stage1: computeStage(STAGES[0], joints),
@@ -234,28 +221,19 @@ export function computeAllBeams(
 }
 
 export function initialJoints(): JointRotations {
-  return Object.fromEntries(JOINT_DEFS.map((j) => [j.id, j.init])) as JointRotations;
-}
-
-/** Causeway tile rects currently energized by any stage's beam. */
-export function energizedRects(joints: JointRotations): Rect[] {
-  const beams = computeAllBeams(joints);
-  const out: Rect[] = [];
-  for (const stage of STAGES) {
-    const res = beams[stage.id];
-    for (const t of stage.tiles) {
-      if (res.edges.includes(t.edge)) out.push(t.rect);
-    }
-  }
-  return out;
+  return Object.fromEntries(
+    JOINT_DEFS.map((j) => [j.id, j.init]),
+  ) as JointRotations;
 }
 
 /**
- * A joint is reachable when its pedestal can be stood on: first joints of
- * each stage sit on spurs attached to the plaza; downstream joints need the
- * beam to have energized the edge leading into them.
+ * A joint is reachable when its pedestal can be stood on: the first joint of
+ * each stage is always active; downstream controls unlock as the signal arrives.
  */
-export function jointReachable(jointId: JointId, joints: JointRotations): boolean {
+export function jointReachable(
+  jointId: JointId,
+  joints: JointRotations,
+): boolean {
   const def = JOINT_BY_ID.get(jointId)!;
   const stage = STAGE_BY_ID.get(def.stage)!;
   if (stage.joints[0].id === jointId) return true;
@@ -289,10 +267,13 @@ function dirToward(from: [number, number], to: [number, number]): Dir {
 /** "joins east–west" for a straight joint, "joins north to east" for an elbow. */
 export function edgesPhrase(kind: JointDef["kind"], edges: Dir[]): string {
   const names = edges.map((d) => DIR_NAME[d]);
-  return kind === "straight" ? `joins ${names[0]}–${names[1]}` : `joins ${names[0]} to ${names[1]}`;
+  return kind === "straight"
+    ? `joins ${names[0]}–${names[1]}`
+    : `joins ${names[0]} to ${names[1]}`;
 }
 
-const sameDirs = (a: Dir[], b: Dir[]) => a.length === b.length && a.every((d) => b.includes(d));
+const sameDirs = (a: Dir[], b: Dir[]) =>
+  a.length === b.length && a.every((d) => b.includes(d));
 
 export interface JointGuide {
   id: JointId;
@@ -324,14 +305,20 @@ export interface StageGuide {
  * Textual view of a stage's live routing state — shared by guided mode and
  * the 3D pause/help panel so both describe the same beam.
  */
-export function stageGuide(stage: StageDef, joints: JointRotations): StageGuide {
+export function stageGuide(
+  stage: StageDef,
+  joints: JointRotations,
+): StageGuide {
   const chain: [number, number][] = [
     stage.source.pos,
     ...stage.joints.map((j) => j.pos),
     stage.target.pos,
   ];
   const guide: JointGuide[] = stage.joints.map((j, i) => {
-    const needs: [Dir, Dir] = [dirToward(j.pos, chain[i]), dirToward(j.pos, chain[i + 2])];
+    const needs: [Dir, Dir] = [
+      dirToward(j.pos, chain[i]),
+      dirToward(j.pos, chain[i + 2]),
+    ];
     const cur = jointEdges(j.kind, joints[j.id]);
     let turnsToAlign = -1;
     for (let k = 0; k < 4; k++) {
@@ -386,9 +373,4 @@ export function stageGuide(stage: StageDef, joints: JointRotations): StageGuide 
     joints: guide,
     hint,
   };
-}
-
-/** +1 turns needed to return a joint to its initial rotation (0-3). */
-export function turnsToInit(current: number, init: number): number {
-  return (((init - current) % 4) + 4) % 4;
 }

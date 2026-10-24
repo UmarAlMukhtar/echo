@@ -1,11 +1,12 @@
 "use client";
 
 import { Canvas, useThree } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
-import Relay from "./Relay";
+import { Suspense, useEffect, useRef } from "react";
 import District from "./District";
 import Npcs from "./Characters";
 import PlayerRig from "./PlayerRig";
+import { useGameStore } from "@/lib/game/store";
+export { clearModelCache } from "./model-cache";
 
 /**
  * Watches this mount's own gl.domElement for context loss. Registered
@@ -34,6 +35,8 @@ export default function CityScene({
   onError: () => void;
   onReady: () => void;
 }) {
+  const sealedPast = useGameStore((s) => s.decisions.retain === false);
+  const fogColor = sealedPast ? "#c7d7eb" : "#cfe6dd";
   return (
     <Canvas
       dpr={[1, 1.5]}
@@ -49,8 +52,8 @@ export default function CityScene({
     >
       <ContextLossWatcher onError={onError} />
       {/* bright mint atmosphere + soft luminous distance fog */}
-      <color attach="background" args={["#cfe6dd"]} />
-      <fog attach="fog" args={["#cfe6dd", 30, 130]} />
+      <color attach="background" args={[fogColor]} />
+      <fog attach="fog" args={[fogColor, 30, 130]} />
       <hemisphereLight args={["#fff3dd", "#a99bc0", 1.15]} />
       <ambientLight intensity={0.3} color="#ffe9d0" />
       <directionalLight
@@ -64,11 +67,16 @@ export default function CityScene({
         shadow-camera-top={24}
         shadow-camera-bottom={-24}
       />
-      <directionalLight position={[-12, 14, -10]} intensity={0.45} color="#7ce8dd" />
-      <District />
-      <Relay />
-      <Npcs />
-      <PlayerRig />
+      <directionalLight
+        position={[-12, 14, -10]}
+        intensity={0.45}
+        color="#7ce8dd"
+      />
+      <Suspense fallback={null}>
+        <District />
+        <Npcs />
+        <PlayerRig />
+      </Suspense>
     </Canvas>
   );
 }

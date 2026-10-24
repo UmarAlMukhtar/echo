@@ -10,7 +10,7 @@ import {
   REVEAL_LINES,
   pickDialogueLines,
 } from "@/lib/game/story";
-import { stageGuide, turnsToInit } from "@/lib/game/signal";
+import { stageGuide } from "@/lib/game/signal";
 import { STAGES } from "@/lib/game/signal";
 import type { DecisionId } from "@/lib/game/types";
 
@@ -79,7 +79,11 @@ function DialogueOverlay({ npcId }: { npcId: "mirai" | "devi" | "ilyas" }) {
   useEscape(closeDialogue);
   return (
     <div className="overlay light-dim">
-      <div className="panel" role="dialog" aria-label={`Speaking with ${npc.name}`}>
+      <div
+        className="panel"
+        role="dialog"
+        aria-label={`Speaking with ${npc.name}`}
+      >
         <div className="dialogue-name">
           <span className="npc-name" style={{ color: npc.accent }}>
             {npc.name}
@@ -136,7 +140,11 @@ function DecisionOverlay({ id }: { id: DecisionId }) {
   const applyDecision = useGameStore((s) => s.applyDecision);
   const closeDecision = useGameStore((s) => s.closeDecision);
   const setNotice = useGameStore((s) => s.setNotice);
-  const [chosen, setChosen] = useState<null | { label: string; consequence: string; flag: boolean }>(null);
+  const [chosen, setChosen] = useState<null | {
+    label: string;
+    consequence: string;
+    flag: boolean;
+  }>(null);
 
   const choose = (opt: (typeof d.options)[number]) => {
     setChosen(opt);
@@ -196,7 +204,11 @@ function EndingOverlay() {
   const e = ENDINGS[ending];
   return (
     <div className="overlay">
-      <div className="panel ending-panel" role="dialog" aria-label={`Ending: ${e.title}`}>
+      <div
+        className="panel ending-panel"
+        role="dialog"
+        aria-label={`Ending: ${e.title}`}
+      >
         <div className="eyebrow">Ending reached</div>
         <h1 className="ending-title">{e.title}</h1>
         {e.body.map((line, i) => (
@@ -254,8 +266,8 @@ function PauseOverlay() {
         <div className="eyebrow">Paused</div>
         <h2>ECHO</h2>
         <p className="dim">
-          WASD / arrows to move · drag to orbit the camera · wheel to zoom ·
-          E or Enter to interact · Esc to pause.
+          WASD / arrows to move · drag to orbit the camera · wheel to zoom · E
+          or Enter to interact · Esc to pause.
         </p>
         <div className="button-row">
           <button className="btn primary" onClick={resume} autoFocus>
@@ -287,7 +299,7 @@ function PauseOverlay() {
 /* Same beam description guided mode shows — read from the shared state. */
 function SignalHelp() {
   const joints = useGameStore((s) => s.joints);
-  const rotateJoint = useGameStore((s) => s.rotateJoint);
+  const resetStage = useGameStore((s) => s.resetStage);
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="signal-help">
@@ -307,15 +319,7 @@ function SignalHelp() {
                 <b>{st.label}</b> — {g.route}; {g.stopsAt}.
               </p>
               {!g.reached && <p>{g.hint}</p>}
-              <button
-                className="btn"
-                onClick={() => {
-                  for (const j of st.joints) {
-                    const turns = turnsToInit(joints[j.id], j.init);
-                    for (let i = 0; i < turns; i++) rotateJoint(j.id);
-                  }
-                }}
-              >
+              <button className="btn" onClick={() => resetStage(st.id)}>
                 Reset stage
               </button>
             </div>
