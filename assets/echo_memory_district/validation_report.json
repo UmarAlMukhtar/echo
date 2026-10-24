@@ -1,29 +1,33 @@
 {
-  "background_startup": "PASS: Blender 4.5.3 LTS, bpy.app.background=True",
-  "cpu_cycles_smoke": "PASS: 64x64 PNG",
-  "three_previews": "PASS: 1440x1080 each, visually inspected",
-  "route_checks": {
+  "background_generation": "PASS",
+  "actual_mesh_route_tests": {
     "garden": {
       "connected_docked": true,
       "sample_interval_m": 0.05,
-      "corridor_width_checked_m": 0.6,
+      "corridor_width_checked_m": 1.8,
+      "character_radius_m": 0.3,
+      "obstacle_clearance_checked": true,
       "max_visual_riser_m": 0.15
     },
     "dock": {
       "connected_docked": true,
       "sample_interval_m": 0.05,
-      "corridor_width_checked_m": 0.6,
+      "corridor_width_checked_m": 1.8,
+      "character_radius_m": 0.3,
+      "obstacle_clearance_checked": true,
       "max_visual_riser_m": 0.0
     },
     "archive": {
       "connected_docked": true,
       "sample_interval_m": 0.05,
-      "corridor_width_checked_m": 0.6,
+      "corridor_width_checked_m": 1.8,
+      "character_radius_m": 0.3,
+      "obstacle_clearance_checked": true,
       "max_visual_riser_m": 0.15
     }
   },
-  "glb_structure": "PASS: 61 nodes; 1128 triangles; 5 materials; expected pivots",
-  "deterministic_glb_sha256": "81a1fe8825926f0903f42cd1daa8cf858e242f7bb674e1ef9d686536eed8dcc5",
-  "independent_regeneration_byte_identical": true,
-  "gameplay_tests": "Not run: application/gameplay source unchanged; asset is not integrated"
+  "bridge_independent_rotation": "PASS: each bridge rotated 90 degrees; other objects unchanged; restored docked",
+  "npc_interaction_clearance": "PASS: 1.2 m radius around each spawn clear of obstacle proxies",
+  "glb_structure": "PASS: hierarchy, collision separation, NPC markers, Y-up pivots, budgets",
+  "gameplay_integration": "Not performed; existing application and gameplay code unchanged"
 }

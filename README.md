@@ -71,19 +71,23 @@ npm run build      # production build
 
 ## Status
 
-### Environment asset blockout (separate review)
+### Detailed environment asset (separate integration)
 
-The asset proposal in [assets/echo_memory_district](assets/echo_memory_district/README.md)
-contains a reproducible Blender generator, editable blockout, review GLB, three
-renders and an object/size report. Generate it with Blender 4.5 LTS:
+The approved district in [assets/echo_memory_district](assets/echo_memory_district/README.md)
+contains a reproducible Blender generator, detailed editable scene, optimized
+visual GLB, separate collision GLB, three renders and an object/size report.
+It preserves the approved plaza, three memory platforms, bridge pivots and NPC
+spawns. Generate and validate it with Blender 4.5 LTS and Python:
 
 ```bash
 blender --background --factory-startup --threads 8 --python-exit-code 1 \
   --python assets/echo_memory_district/generate_district.py
+python3 assets/echo_memory_district/validate_asset.py
 ```
 
-Layout approval is pending. This proposal is not loaded by the application; its
-raised routes and coordinates require a later, separately scoped integration.
+The visual export has 10,838 triangles, six materials and 38 material batches.
+This asset is not loaded by the application; its raised routes and coordinates
+require a later, separately scoped integration. Gameplay source is unchanged.
 
 - Working: full game loop — 3 signal stages with rotatable joints and energized causeways, 3 NPCs, 3 decisions with live city transformations, 3 endings with recap, local save/resume (v2, incl. joint state), guided story mode, pause, reduced motion.
 - Known limitations: no audio (by design — all clues are written); camera orbit is drag-based rather than pointer-lock; story-mode navigation is abstracted to locations.

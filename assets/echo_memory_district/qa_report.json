@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "visual_inspection": "Three final previews and re-imported optimized GLB inspected",
+  "collision_closed_outward": "PASS: independent validator",
+  "regeneration_byte_identical": {
+    "visual": "cd5c1e3338a0a391c72d8fc910814afe4b24760d90748d62681d9d067f0e7d52",
+    "collision": "43f03fd8c91155327f6c0364a721e402d9cac337af92f8f556155e043a318835"
+  },
+  "optimized_glb_roundtrip": {
+    "imported_nodes": 45,
+    "imported_meshes": 38,
+    "render_resolution": [
+      960,
+      720
+    ],
+    "render_samples": 12,
+    "mean_absolute_rgb_difference_0_to_255": [
+      0.6661125578703704,
+      0.6224262152777778,
+      0.6970269097222223
+    ],
+    "corner_overlap_artifact": "corrected"
+  },
+  "script_syntax": "PASS",
+  "reported_file_sizes": "PASS",
+  "application_gameplay_source_changes": false,
+  "in_engine_physics_test": "Not performed: separate integration task"
+}

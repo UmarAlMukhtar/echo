@@ -1,5 +1,19 @@
 # AI usage record
 
+## Approved environment detailing — 2026-10-25T00:04:38+05:30
+
+- Tool: Codex with Blender 4.5.3 LTS, headless CPU Cycles and standard Python.
+- User direction: blockout approved; add detail while preserving the separate asset branch.
+- Contribution: procedural architectural/prop detail, repeated mesh components,
+  independent bridge groups, optimized material batches, collision GLB, three
+  renders, independent asset validator and full object/size/integration reports.
+- Checks: route and NPC clearance, bridge motion, collision closure/outward winding,
+  GLB hierarchy/axes, byte-identical regeneration, file sizes and syntax.
+- Corrections: closed mesh winding normalized for physics; duplicate corner posts
+  removed after the optimized GLB round-trip render exposed dark overlap artifacts.
+- Human review: blockout approved; detailed output awaiting any further feedback.
+- Scope: assets and documentation only; no application/gameplay source changes.
+
 ## Environment blockout — 2026-10-24T23:40:00+05:30
 
 - Tool: Codex with Blender 4.5.3 LTS running headlessly on CPU.

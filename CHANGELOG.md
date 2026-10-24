@@ -1,5 +1,32 @@
 # Change log
 
+## 2026-10-25T00:12:41+05:30 — Detail approved district and optimize asset exports
+
+- Changed: expanded `assets/echo_memory_district/generate_district.py` with plaza
+  paving/mosaic/astrolabe, layered foundations, tower windows/roofs, arch trim,
+  garden planting/bench, dock station/bollards, archive shelves/seats and railings.
+  Replaced blockout outputs with editable `echo_district.blend`, optimized visual
+  `echo_district.glb`, separate collision GLB and three 1920 × 1440 previews.
+- Why: the user approved blockout `e8effb8` and requested detail. Walking surfaces,
+  heights, bridge pivots and NPC spawns retain that layout. Shared mesh components
+  remain editable; production geometry batches by district/material and bridge.
+- Validation: headless Blender generation and all three CPU Cycles renders passed;
+  1.8 m route corridors tested with 0.3 m character radius, max riser 0.15 m;
+  NPC clearance and independent bridge rotation passed. Independent GLB validator
+  passed closed/outward collision geometry, hierarchy, Y-up pivots, spawn markers,
+  material/triangle/size budgets and visual/collision separation. Two independent
+  generations produced byte-identical GLBs. Final visual: 614,080 bytes, 10,838
+  triangles, 6 materials, 38 material batches; collision: 51,772 bytes, 768 instance
+  triangles, 64 proxy nodes. Python syntax, report file sizes and diff whitespace pass.
+- Files: asset folder, repository `README.md`, `AI_USAGE.md`, `CHANGELOG.md`.
+- Limitations: no gameplay integration or in-engine physics test. The existing flat
+  floor controller needs a separately scoped integration. Lighting/atmosphere must
+  be configured in-engine; NPC characters are preview stand-ins with runtime spawns.
+  Application, components, game logic and tests remain unchanged.
+- Final QA: optimized GLB re-import rendered successfully; duplicate corner posts
+  removed to eliminate dark overlap artifacts. Corrected exports reproduce bytewise.
+  Three corrected previews regenerated and visually checked.
+
 ## 2026-10-24T23:40:00+05:30 — Environment layout review blockout
 
 - Changed: added `assets/echo_memory_district/` with a deterministic Blender
