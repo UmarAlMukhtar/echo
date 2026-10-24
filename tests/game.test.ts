@@ -72,6 +72,8 @@ describe("ending rule", () => {
     [{ retain: false, serve: true, control: false }, "watcher"],
     [{ retain: false, serve: false, control: true }, "watcher"],
     [{ retain: true, serve: true, control: false }, "watcher"],
+    [{ retain: false, serve: true, control: true }, "watcher"],
+    [{ retain: true, serve: false, control: true }, "watcher"],
   ];
   it.each(all)("decisions %j → %s", (d, expected) => {
     expect(computeEnding(d)).toBe(expected);
@@ -115,6 +117,59 @@ describe("save validation", () => {
   it("rejects non-object input", () => {
     expect(validateSave("junk")).toBeNull();
     expect(validateSave(null)).toBeNull();
+  });
+  it("rejects duplicate fragments", () => {
+    expect(
+      validateSave({ ...goodSave, fragments: ["tide", "tide"], talkedTo: ["mirai"] })
+    ).toBeNull();
+  });
+  it("rejects duplicate NPC visits", () => {
+    expect(
+      validateSave({ ...goodSave, talkedTo: ["mirai", "mirai"] })
+    ).toBeNull();
+  });
+  it("rejects a fragment whose owner was never met", () => {
+    expect(
+      validateSave({ ...goodSave, fragments: ["rain"], talkedTo: ["mirai"] })
+    ).toBeNull();
+  });
+  it("rejects puzzleSolved before all fragments", () => {
+    expect(
+      validateSave({ ...goodSave, puzzleSolved: true, fragments: ["tide"] })
+    ).toBeNull();
+  });
+  it("rejects decisions without a solved puzzle", () => {
+    expect(
+      validateSave({ ...goodSave, decisions: { retain: true } })
+    ).toBeNull();
+  });
+  it("rejects out-of-order decisions", () => {
+    const base = {
+      ...goodSave,
+      fragments: ["tide", "lantern", "rain"],
+      talkedTo: ["mirai", "devi", "ilyas"],
+      puzzleSolved: true,
+    };
+    expect(validateSave({ ...base, decisions: { serve: true } })).toBeNull();
+    expect(
+      validateSave({ ...base, decisions: { retain: true, control: true } })
+    ).toBeNull();
+  });
+  it("accepts a valid endgame save", () => {
+    const endSave = {
+      ...goodSave,
+      fragments: ["tide", "lantern", "rain"],
+      talkedTo: ["mirai", "devi", "ilyas"],
+      puzzleSolved: true,
+      decisions: { retain: true, serve: false, control: true },
+    };
+    expect(validateSave(endSave)).not.toBeNull();
+  });
+  it("normalizes out-of-bounds saved positions", () => {
+    const data = validateSave({ ...goodSave, playerPos: [999, -999] });
+    expect(data).not.toBeNull();
+    expect(data!.playerPos[0]).toBeLessThanOrEqual(20);
+    expect(data!.playerPos[1]).toBeGreaterThanOrEqual(-17);
   });
 });
 

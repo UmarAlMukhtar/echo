@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useGameStore } from "@/lib/game/store";
+import { playerRuntime, useGameStore } from "@/lib/game/store";
 import TitleScreen from "@/components/ui/TitleScreen";
 import Hud from "@/components/ui/Hud";
 import Overlays from "@/components/ui/Overlays";
@@ -54,6 +54,14 @@ export default function GameShell() {
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
+  }, []);
+
+  // Test/debug handle — lets playtests read position and state without internals.
+  useEffect(() => {
+    (window as unknown as { __echo?: unknown }).__echo = {
+      store: useGameStore,
+      player: playerRuntime,
+    };
   }, []);
 
   useEffect(() => {

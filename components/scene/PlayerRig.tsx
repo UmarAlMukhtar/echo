@@ -117,9 +117,13 @@ export default function PlayerRig() {
       vel.current.x = dx * SPEED;
       vel.current.z = dz * SPEED;
       facing.current = Math.atan2(dx, dz);
-    } else {
+    } else if (playing) {
       vel.current.x *= 0.8;
       vel.current.z *= 0.8;
+    } else {
+      // Dialogue/pause/endings: stop dead, don't drift.
+      vel.current.x = 0;
+      vel.current.z = 0;
     }
     const p = playerRuntime.pos;
     p.x += vel.current.x * clamped;
@@ -148,7 +152,7 @@ export default function PlayerRig() {
 
     /* --- camera --- */
     if (s.phase === "title") {
-      const t = state.clock.elapsedTime * 0.07;
+      const t = s.reducedMotion ? 0 : state.clock.elapsedTime * 0.07;
       camera.position.set(Math.sin(t) * 15, 7.5, Math.cos(t) * 15);
       camera.lookAt(0, 4.5, 0);
     } else {

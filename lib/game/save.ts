@@ -1,4 +1,6 @@
 import type { DecisionId, Decisions, FragmentId, NpcId } from "./types";
+import { WORLD_BOUNDS, SPAWN } from "./story";
+import { resolveCollisions, staticColliders } from "./city";
 
 export const SAVE_KEY = "echo-save-v1";
 export const SAVE_VERSION = 1;
@@ -23,11 +25,25 @@ export interface StorageLike {
 }
 
 const FRAGMENTS: FragmentId[] = ["tide", "lantern", "rain"];
-const NPCS: NpcId[] = ["mirai", "devi", "ilyas"];
+const NPC_KEYS: NpcId[] = ["mirai", "devi", "ilyas"];
 const DECISION_IDS: DecisionId[] = ["retain", "serve", "control"];
 
 function isFiniteNumber(v: unknown): v is number {
   return typeof v === "number" && Number.isFinite(v);
+}
+
+const FRAGMENT_OWNER: Record<FragmentId, NpcId> = {
+  tide: "mirai",
+  lantern: "devi",
+  rain: "ilyas",
+};
+
+/** Normalize a saved position into a safe spawnable spot. */
+function normalizePosition(x: number, z: number): [number, number] {
+  const p = { x, z };
+  resolveCollisions(p, 0.55, staticColliders(), WORLD_BOUNDS);
+  if (!Number.isFinite(p.x) || !Number.isFinite(p.z)) return [...SPAWN];
+  return [p.x, p.z];
 }
 
 /** Validate an unknown value as a SaveData; returns null when invalid. */
@@ -37,15 +53,25 @@ export function validateSave(raw: unknown): SaveData | null {
   if (s.version !== SAVE_VERSION) return null;
   if (
     !Array.isArray(s.fragments) ||
-    !s.fragments.every((f) => FRAGMENTS.includes(f as FragmentId))
+    !s.fragments.every((f) => FRAGMENTS.includes(f as FragmentId)) ||
+    new Set(s.fragments).size !== s.fragments.length
   )
     return null;
   if (
     !Array.isArray(s.talkedTo) ||
-    !s.talkedTo.every((n) => NPCS.includes(n as NpcId))
+    !s.talkedTo.every((n) => NPC_KEYS.includes(n as NpcId)) ||
+    new Set(s.talkedTo).size !== s.talkedTo.length
   )
     return null;
+  const fragments = s.fragments as FragmentId[];
+  const talkedTo = s.talkedTo as NpcId[];
+  // A fragment can only come from its owner's dialogue.
+  for (const f of fragments) {
+    if (!talkedTo.includes(FRAGMENT_OWNER[f])) return null;
+  }
   if (typeof s.puzzleSolved !== "boolean") return null;
+  // The relay puzzle cannot be solved before all three fragments exist.
+  if (s.puzzleSolved && fragments.length < 3) return null;
   if (typeof s.decisions !== "object" || s.decisions === null) return null;
   const decisions: Decisions = {};
   for (const [k, v] of Object.entries(s.decisions)) {
@@ -53,6 +79,12 @@ export function validateSave(raw: unknown): SaveData | null {
       return null;
     decisions[k as DecisionId] = v;
   }
+  // Decisions are ordered: retain ← serve ← control, all gated by the puzzle.
+  if (decisions.retain !== undefined && !s.puzzleSolved) return null;
+  if (decisions.serve !== undefined && decisions.retain === undefined)
+    return null;
+  if (decisions.control !== undefined && decisions.serve === undefined)
+    return null;
   if (
     !Array.isArray(s.playerPos) ||
     s.playerPos.length !== 2 ||
@@ -64,11 +96,11 @@ export function validateSave(raw: unknown): SaveData | null {
   if (!isFiniteNumber(s.savedAt)) return null;
   return {
     version: SAVE_VERSION,
-    fragments: s.fragments as FragmentId[],
-    talkedTo: s.talkedTo as NpcId[],
+    fragments,
+    talkedTo,
     puzzleSolved: s.puzzleSolved,
     decisions,
-    playerPos: [s.playerPos[0], s.playerPos[1]],
+    playerPos: normalizePosition(s.playerPos[0], s.playerPos[1]),
     mode,
     savedAt: s.savedAt,
   };
