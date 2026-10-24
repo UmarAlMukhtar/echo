@@ -4,17 +4,28 @@ Built for Devin Hacks Kochi, Track 4 — MAKE ROOM FOR PLAY.
 
 ## Pillars
 
-1. **A city you can read at a glance.** One dense canal district, procedural low-poly geometry, charcoal/limestone/teal/amber palette, a single landmark (the memory relay) that orientates the player everywhere.
-2. **Three memories that disagree.** Three named residents each hand over a signal fragment and a written clue. All clues are text — no audio needed anywhere.
-3. **Decisions that visibly change the world.** Each of the three decisions immediately re-lights or re-populates the district, so the consequence is seen before the ending explains it.
+1. **Architecture is the puzzle.** One compact floating district, one coherent
+   spatial system: rotate relay joints so a visible signal beam carries through
+   causeways and energizes the tiles you actually walk on.
+2. **A city you can read at a glance.** Bright sculptural palette — ivory and
+   peach faces, lilac shadow sides, mint-teal atmosphere with soft luminous
+   fog — and one unmistakable focal structure (the relay spire). Elevated
+   three-quarter camera with restrained drag orbit.
+3. **Three memories that disagree.** Each memory platform holds one resident
+   whose fragment and written clue unlock a consequential decision — the
+   decisions are woven through progression, one after each stage.
+4. **Decisions that visibly change the world.** Each choice immediately
+   re-lights or re-populates the district before the ending explains it.
 
 ## Narrative structure
 
 ```
-title → intro → explore (meet Mirai, Devi, Ilyas — any order)
-      → relay puzzle → reveal → decision 1 (retain)
-      → canal lock → decision 2 (serve)
-      → archive vault → decision 3 (control)
+title → intro → stage 1: garden signal (teaches the single turn)
+      → Mirai → decision 1 (retain)
+      → stage 2: dock signal (two joints combine)
+      → Devi → decision 2 (serve)
+      → stage 3: archive signal (straight + two elbows)
+      → Ilyas → reveal → decision 3 (control)
       → overlook → ending + recap → wander / replay
 ```
 
@@ -22,13 +33,27 @@ Mystery: signal keeper Arjun Varma "defected" the night of the surge-flood.
 Truth: he overloaded the relay to hide the district archive inside the city's
 own infrastructure — the city is the vault.
 
-## The puzzle
+## The spatial puzzle
 
-Three fragment dials (tide, lantern, rain), four phases each. Each NPC's clue
-names the correct phase in plain text; the correct combination is
-`tide=rising, lantern=lit, rain=passed` (`CORRECT_PHASES` in
-`lib/game/story.ts`). The UI re-shows the three clues in place so the puzzle
-never depends on memory or audio.
+`lib/game/signal.ts` is the whole system:
+
+- **Joints** come in two shapes — `straight` (conducts two opposite edges) and
+  `elbow` (conducts two adjacent edges) — each rotatable in 90° steps by
+  standing at its pedestal and pressing E (or its button in guided mode).
+- **The beam** propagates from a stage emitter, across straight lines through
+  each joint's two connected edges, to the memory platform. It is drawn in the
+  scene as a luminous teal bar, so the routing itself is visible feedback.
+- **Energized causeways.** Every traversed beam edge raises its causeway tile
+  into the walkable floor union (`energizedRects` → `isWalkable`). The bridge
+  you cross is the signal you just routed.
+- **Progression gating.** A joint can only be turned once the beam has reached
+  its pedestal (`jointReachable`), so stages teach then combine: stage 1 is a
+  single turn; stage 2 chains two elbows; stage 3 interleaves an elbow, a
+  straight, and a final elbow.
+- **Reversible, no softlocks.** Joints rotate freely in both directions;
+  breaking a connection folds its tiles away. If that ever strands the player
+  off the plaza's floor island, they are caught back at the plaza with a
+  notice. Guided mode exposes per-stage reset buttons.
 
 ## Ending rule (explicit, testable)
 
@@ -47,31 +72,36 @@ unit-tested over all eight flag combinations.
 
 ## Architecture
 
-- `lib/game/` — pure logic: story content, puzzle, save schema, zustand store,
-  city layout/colliders. No React/three imports; fully unit-testable.
-- `components/scene/` — React Three Fiber scene: procedural district, relay,
-  NPC avatars, player rig (WASD + drag-orbit camera + collisions), and the
-  three decision-driven transformation groups (ghost quarter, lamp/floodlight
+- `lib/game/` — pure logic: signal propagation (`signal.ts`), floor/collider
+  union (`city.ts`), story content, save schema v2, zustand store. No
+  React/three imports; fully unit-testable.
+- `components/scene/` — React Three Fiber scene: pale platforms and rising
+  energized tiles, beam bars, emitter obelisks, rotating joint pedestals, the
+  relay spire, arches/floating steps/pale skyline, and the three
+  decision-driven transformation groups (ghost quarter, lamp/floodlight
   lighting, dispersed/sealed archive shards).
-- `components/ui/` — DOM overlays (title, HUD, dialogue, puzzle, reveal,
-  decisions, ending, pause). All keyboard-operable HTML controls.
+- `components/ui/` — DOM overlays (title, HUD, dialogue, reveal, decisions,
+  ending, pause). All keyboard-operable HTML controls.
 - `components/story/StoryMode.tsx` — guided mode: the same state machine
-  driven through plain HTML location/actions UI. Playable with no WebGL, no
-  mouse, or on touch.
+  driven through plain HTML location/action UI (turn joints, travel gated by
+  energized causeways, talk to residents, make the same decisions, reach the
+  same endings). Playable with no WebGL, no mouse, or on touch.
 
-## State & saves
+## Saves
 
-`zustand` store is the single narrative state machine. Movement speed and the
-player position live in a mutable runtime ref so per-frame updates never
-trigger React re-renders. Progress is written to versioned `localStorage`
-(`echo-save-v1`) after every meaningful milestone; `validateSave` rejects
-corrupt/old data, and the title screen reports "unavailable" storage honestly.
+Versioned localStorage (`echo-save-v2`) storing fragments, residents heard,
+joint rotations, decisions, player position and mode. Validation rejects
+duplicates, impossible progress (decisions without their resident's talk,
+out-of-order decisions), malformed joint rotations, and normalizes positions
+that no longer connect to the plaza. A save from the earlier build
+(`echo-save-v1`) is reported as *outdated* and cleared — honestly, never
+silently.
 
-## Performance & accessibility
+## Accessibility & comfort
 
-- `dpr` capped at 1.5, instanced windows, fog-limited draw distance, no
-  post-processing.
-- Reduced motion (OS setting or HUD toggle) freezes bobbing, ring rotation,
-  water undulation and marker animation.
-- Escape pauses; keyboard clears on window blur; pointer-lock is never used —
-  the camera orbits by drag so focus and keyboard access are never stolen.
+- Reduced-motion toggle (+ OS preference): halts orbits, bobbing, sparks.
+- Guided story mode is a complete equivalent path — every action, every
+  decision, every ending.
+- All critical info is text or geometry; no audio is required anywhere.
+- Pause overlays freeze the world; movement velocity is hard-zeroed while
+  any overlay is open.

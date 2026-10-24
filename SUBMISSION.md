@@ -5,7 +5,7 @@ Complete this file during the hackathon and use it to prepare your submission th
 ## Project
 
 - **Project name:** ECHO: The City That Remembers
-- **Short description:** A ~10-minute 3D interactive mystery set in a flooded futuristic canal district inspired by Kochi. Three residents remember a disappearance differently; the player aligns their memories at a central relay, then makes three decisions that visibly reshape the city, leading to one of three endings. Runs in the browser — includes a no-WebGL guided story mode.
+- **Short description:** A ~10-minute 3D architectural puzzle-mystery in a floating pale-stone canal district. Rotate relay joints to route a visible signal beam across the causeways it energizes, reach three memory platforms, hear three conflicting memories of a disappearance, then make three decisions that visibly reshape the city — leading to one of three endings. Runs in the browser — includes a no-WebGL guided story mode.
 - **Code repository URL:** https://github.com/UmarAlMukhtar/echo
 - **Final submitted implementation commit SHA:** TODO — record the final pushed SHA here.
 - **Working demo URL or local demo steps:** `npm install && npm run dev`, then open http://localhost:3000. (Preview deployment URL: TODO if a deploy is configured.)
@@ -27,12 +27,12 @@ Participate solo or in a team of up to 4. Remove unused rows.
 - **Start command:** `npm run dev` (dev) or `npm run build && npm start` (production)
 - **Demo walkthrough:**
   1. Title → *New game* → read the intro.
-  2. Meet Mirai (relay garden), Devi (west dock), Ilyas (workshop) — walk to each cyan marker and press E; each grants a fragment and a clue.
-  3. Attune the memory relay (plaza): tune the three dials to the phases in the clues (tide rising / lantern lit / rain passed).
-  4. Make the three decisions at the relay, the canal lock, and the archive vault — watch the district change each time.
+  2. Stage 1: cross to the plaza, stand at the glowing joint pedestal, press E to turn it — the beam routes through and a causeway rises. Cross it to the garden platform, meet Mirai, make decision 1.
+  3. Stage 2: chain two elbow joints so the beam bends around the gap to the dock platform; meet Devi, make decision 2.
+  4. Stage 3: interleave an elbow, a straight joint and a final elbow to reach the archive platform; meet Ilyas, read the reveal, make decision 3.
   5. Climb to the overlook for the ending recap; replay to reach the other two endings.
-- **Checks performed and results:** `npm run typecheck` clean; `npx eslint .` clean; `npx vitest run` 28/28 pass; `npm run build` succeeds. Browser playthrough results in CHANGELOG.
-- **Known limitations or incomplete features:** No audio (all clues written); story-mode navigation is abstracted to named locations; procedural art only (no downloaded assets).
+- **Checks performed and results:** `npm run typecheck` clean; `npx eslint .` clean; `npx vitest run` 49/49 pass; `npm run build` succeeds. Browser playthrough results in CHANGELOG.
+- **Known limitations or incomplete features:** No audio (all clues written); story-mode navigation is abstracted to named locations; procedural art only (no downloaded assets); camera is a restrained elevated orbit rather than free pointer-lock.
 - **Libraries, APIs, and public datasets used:** Next.js, React, three.js, React Three Fiber, drei, zustand, vitest — see package.json; no external assets or datasets.
 - **AI usage record:** [AI_USAGE.md](AI_USAGE.md)
 - **Development change log:** [CHANGELOG.md](CHANGELOG.md)

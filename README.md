@@ -1,6 +1,6 @@
 # ECHO: The City That Remembers
 
-A single-player 3D interactive mystery for **Devin Hacks Kochi — Track 4, MAKE ROOM FOR PLAY**. Explore a flooded futuristic canal district inspired by Kochi, recover three conflicting memories of the night the signal keeper vanished, align them at the memory relay, and make three decisions that visibly reshape the city — leading to one of three endings.
+A single-player 3D architectural puzzle-mystery for **Devin Hacks Kochi — Track 4, MAKE ROOM FOR PLAY**. Explore a floating pale-stone canal district inspired by Kochi, rotate relay joints so a visible signal beam energizes the causeways you walk on, reach three memory platforms, hear what three residents remember of the night the signal keeper vanished, and make three decisions that visibly reshape the city — leading to one of three endings.
 
 ## Repository provenance
 
@@ -10,7 +10,7 @@ This repository began as a documentation template for the **DevDay Exchange Comm
 
 - **Setting:** Veli, the Ninth Canal District — a quarter suspended between an erased past and a managed present.
 - **Mystery:** Seven years ago the surge-flood drowned the old quarter and the signal keeper Arjun Varma vanished. Three residents remember him differently.
-- **Play:** ~8–12 minutes. Meet three NPCs (Mirai, Devi, Ilyas), collect their signal fragments, solve the relay-alignment puzzle, then make three decisions — what the city keeps, whom the grid serves, who holds memory — each of which transforms the district in front of you.
+- **Play:** ~8–12 minutes. Three escalating signal stages: stand at a relay joint and press E to turn it, watch the teal beam route through causeways, and cross the energized tiles to each memory platform — Mirai (garden), Devi (dock), Ilyas (archive). After each stage a resident's memory unlocks a decision — what the city keeps, whom the grid serves, who holds memory — each of which transforms the district in front of you. States are reversible, resets are intentional, and there are no softlocks.
 - **Endings:** three reachable endings governed by an explicit rule (see [DESIGN.md](DESIGN.md)): all-open → *The City Remembers*; all-sealed → *The Quiet City*; mixed → *The Watcher*.
 - **Saves:** versioned `localStorage` save written at each milestone; corrupt or outdated saves are rejected safely, and blocked storage is reported.
 
@@ -34,7 +34,7 @@ Checks:
 ```bash
 npm run lint       # eslint
 npm run typecheck  # tsc --noEmit
-npm test           # vitest — puzzle, decisions, endings, saves, flow
+npm test           # vitest — signal propagation, energized floors, decisions, endings, saves, flow
 npm run build      # production build
 ```
 
@@ -54,8 +54,8 @@ npm run build      # production build
 ## Project structure
 
 - `app/` — Next.js App Router shell
-- `lib/game/` — pure game logic: story content, puzzle, endings rule, save schema, city layout/colliders, zustand store (unit-tested, no React)
-- `components/scene/` — React Three Fiber scene: procedural city, relay, NPCs, player rig, decision-driven transformations
+- `lib/game/` — pure game logic: signal routing (`signal.ts`), story content, endings rule, save schema v2, city floor/colliders, zustand store (unit-tested, no React)
+- `components/scene/` — React Three Fiber scene: platforms + energized tiles, relay spire, beam/joints, NPCs, player rig, decision-driven transformations
 - `components/ui/` — DOM overlays: title, HUD, dialogue, puzzle, decisions, ending, pause
 - `components/story/` — guided story mode
 - `tests/` — vitest suite
@@ -71,5 +71,5 @@ npm run build      # production build
 
 ## Status
 
-- Working: full game loop — 3 NPCs, relay puzzle, 3 decisions with live city transformations, 3 endings with recap, local save/resume, guided story mode, pause, reduced motion.
+- Working: full game loop — 3 signal stages with rotatable joints and energized causeways, 3 NPCs, 3 decisions with live city transformations, 3 endings with recap, local save/resume (v2, incl. joint state), guided story mode, pause, reduced motion.
 - Known limitations: no audio (by design — all clues are written); camera orbit is drag-based rather than pointer-lock; story-mode navigation is abstracted to locations.
