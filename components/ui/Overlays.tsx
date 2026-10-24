@@ -9,7 +9,8 @@ import {
   NPCS,
   REVEAL_LINES,
 } from "@/lib/game/story";
-import { computeAllBeams } from "@/lib/game/signal";
+import { computeAllBeams, stageGuide, turnsToInit } from "@/lib/game/signal";
+import { STAGES } from "@/lib/game/signal";
 import type { DecisionId } from "@/lib/game/types";
 
 export default function Overlays() {
@@ -280,7 +281,49 @@ function PauseOverlay() {
             </button>
           )}
         </div>
+        <SignalHelp />
       </div>
+    </div>
+  );
+}
+
+/* Same beam description guided mode shows — read from the shared state. */
+function SignalHelp() {
+  const joints = useGameStore((s) => s.joints);
+  const rotateJoint = useGameStore((s) => s.rotateJoint);
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="signal-help">
+      <button
+        className="btn"
+        aria-expanded={expanded}
+        onClick={() => setExpanded(!expanded)}
+      >
+        Signal help: {expanded ? "hide" : "show"}
+      </button>
+      {expanded &&
+        STAGES.map((st) => {
+          const g = stageGuide(st, joints);
+          return (
+            <div key={st.id} className="signal-help-stage">
+              <p className="dim">
+                <b>{st.label}</b> — {g.route}; {g.stopsAt}.
+              </p>
+              {!g.reached && <p>{g.hint}</p>}
+              <button
+                className="btn"
+                onClick={() => {
+                  for (const j of st.joints) {
+                    const turns = turnsToInit(joints[j.id], j.init);
+                    for (let i = 0; i < turns; i++) rotateJoint(j.id);
+                  }
+                }}
+              >
+                Reset stage
+              </button>
+            </div>
+          );
+        })}
     </div>
   );
 }

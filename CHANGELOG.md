@@ -2,6 +2,13 @@
 
 Record each meaningful project change during the event, newest first. Update this file in the same commit as the change. Use a real timestamp with timezone, for example `YYYY-MM-DDTHH:MM:SS+05:30`.
 
+## 2026-10-24T17:35:00+00:00 — Guided-mode accessibility + shared signal help
+
+- Changed: Guided story mode now shows what the beam is doing instead of bare "partway and dies": a shared `stageGuide` helper in `lib/game/signal.ts` describes each stage's route (emitter direction → target platform), every joint's current compass connections in words, the exact joint where the signal dies with the side it arrives on, and an optional computed hint ("turn j3b once — the signal must pass north–south"). Guided mode gained a toolbar with the live objective, Pause, Return-to-3D and a Hints on/off toggle. The 3D pause panel gained a "Signal help" section with the same per-stage description, hint and per-stage Reset — reset was previously guided-mode-only and there was no hint anywhere.
+- Why: Independent guided-mode review — the UI exposed no joint connections, expected route, blocked node or hint, so solving was blind trial and error; objective/pause/return-to-3D controls were missing in guided mode.
+- Validation: `npx tsc --noEmit` clean, `npm run lint` clean, `npx vitest run` 52/52 passing (three new stageGuide regression tests). Guided-mode equivalence verified end-to-end on the production build via CDP: all six joint turns through the same store actions the buttons call, gated travel, three NPCs, reveal, three decisions, THE CITY REMEMBERS ending + recap, replay reset, save overwrite confirmation, 390px narrow viewport.
+- Limitations: hint text is generated from the known solution route (each joint's required entry/exit edges), not a general solver — fine for three authored stages.
+
 ## 2026-10-24T17:25:00+00:00 — Redesign fixes: decision consequence, arch camera, title UX
 
 - Changed: Decision panels now keep their consequence text visible until the player presses Continue — `applyDecision` no longer clears the overlay; the new `closeDecision` store action chains into pending decisions afterward (regression test added). `CAMERA_TALL` now models only each arch's actual columns instead of a solid box over the opening, so the elevated camera keeps its overview when walking through causeway arches (verified the close-clamp bug is gone by geometry — columns sit at the arch edges only). Title screen tagline explains the architectural-puzzle premise; starting a New game over an existing save now asks for explicit confirmation before overwriting.

@@ -6,6 +6,8 @@ import {
   STAGES,
   computeAllBeams,
   jointReachable,
+  stageGuide,
+  turnsToInit,
 } from "@/lib/game/signal";
 import type { JointId } from "@/lib/game/signal";
 import type { InteractableSpec } from "@/lib/game/types";
@@ -58,6 +60,7 @@ const PLACES: Place[] = [
 
 export default function StoryMode() {
   const [place, setPlace] = useState("plaza");
+  const [showHints, setShowHints] = useState(false);
   const s = useGameStore();
   const beams = computeAllBeams(s.joints);
   const here = PLACES.find((p) => p.id === place)!;
@@ -72,7 +75,27 @@ export default function StoryMode() {
   return (
     <div className="story-mode">
       <div className="story-inner">
-        <span className="story-badge">Guided story mode</span>
+        <div className="story-toolbar">
+          <span className="story-badge">Guided story mode</span>
+          <span className="story-objective" aria-live="polite">
+            <b>Objective.</b> {s.objective}
+          </span>
+          <div className="story-controls">
+            <button
+              className="btn"
+              aria-pressed={showHints}
+              onClick={() => setShowHints(!showHints)}
+            >
+              Hints: {showHints ? "on" : "off"}
+            </button>
+            <button className="btn" onClick={() => s.pause()}>
+              Pause
+            </button>
+            <button className="btn" onClick={() => s.setMode("3d")}>
+              Return to 3D
+            </button>
+          </div>
+        </div>
         <div className="story-scene">
           <b>{here.name}.</b> {here.desc}
         </div>
@@ -85,16 +108,24 @@ export default function StoryMode() {
             </div>
             {STAGES.map((st) => {
               const res = beams[st.id];
+              const guide = stageGuide(st, s.joints);
               return (
                 <div key={st.id} className="story-scene" style={{ marginTop: 8 }}>
                   <div>
-                    <b>{st.label}</b> —{" "}
+                    <b>{st.label}</b> — {guide.route};{" "}
                     {res.reached
                       ? `the signal reaches the ${st.targetName}.`
-                      : res.edges.length > 0
-                        ? "the beam travels partway and dies."
-                        : "the beam is blocked at the first joint."}
+                      : `${guide.stopsAt}.`}
                   </div>
+                  <div className="story-joints" aria-label={`${st.label} joint connections`}>
+                    {guide.joints.map((jg) => (
+                      <span key={jg.id} className="dim">
+                        {jg.id} {jg.current}
+                        {jg.aligned ? " (aligned)" : ""}
+                      </span>
+                    ))}
+                  </div>
+                  {showHints && !res.reached && <div className="story-hint">{guide.hint}</div>}
                   <div className="story-map" role="group" aria-label={`${st.label} joints`}>
                     {st.joints.map((j) => {
                       const ok = reachableJoints(j.id);
@@ -128,8 +159,7 @@ export default function StoryMode() {
                       title="Return every joint in this stage to its starting angle"
                       onClick={() => {
                         for (const j of st.joints) {
-                          const cur = s.joints[j.id];
-                          const turns = (4 - ((cur - j.init) % 4)) % 4;
+                          const turns = turnsToInit(s.joints[j.id], j.init);
                           for (let i = 0; i < turns; i++) s.rotateJoint(j.id);
                         }
                       }}

@@ -575,6 +575,65 @@ canvas {
   margin-bottom: 10px;
 }
 
+.story-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.story-objective {
+  flex: 1 1 280px;
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.story-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.story-controls .btn {
+  font-size: 0.72em;
+}
+
+.story-joints {
+  margin-top: 6px;
+  font-size: 0.78em;
+  line-height: 1.6;
+}
+
+.story-joints span {
+  display: inline-block;
+  margin-right: 14px;
+}
+
+.story-hint {
+  margin-top: 6px;
+  font-size: 0.82em;
+  color: var(--cyan);
+}
+
+.signal-help {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.signal-help-stage {
+  margin-top: 12px;
+}
+
+.signal-help-stage p {
+  margin: 4px 0;
+  font-size: 0.8em;
+  line-height: 1.5;
+}
+
+.signal-help-stage .btn {
+  font-size: 0.72em;
+}
+
 /* --------------------------- Small screens ------------------------- */
 
 @media (max-width: 620px) {

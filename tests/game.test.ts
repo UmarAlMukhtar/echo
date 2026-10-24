@@ -6,6 +6,7 @@ import {
   initialJoints,
   jointEdges,
   jointReachable,
+  stageGuide,
 } from "../lib/game/signal";
 import type { JointRotations } from "../lib/game/signal";
 import {
@@ -62,6 +63,39 @@ describe("signal routing", () => {
     expect(beams.stage1.edges).toContain("src>j1");
     expect(beams.stage2.edges).toContain("src>j2a");
     expect(beams.stage3.edges).toContain("src>j3a");
+  });
+
+  it("stageGuide names the route, joint edges and stop point at start", () => {
+    const g = stageGuide(STAGES[1], initialJoints());
+    expect(g.route).toContain("dock platform");
+    expect(g.reached).toBe(false);
+    // j2a at rot 0 joins north+east; the beam arrives from the east so it
+    // passes through but exits north, dying in open air — the guide must
+    // name that stop point, not just "partway and dies".
+    expect(g.joints.find((x) => x.id === "j2a")!.current).toContain("north");
+    expect(g.stopsAt.length).toBeGreaterThan(10);
+    expect(g.hint).toMatch(/turn j2a/);
+  });
+
+  it("stageGuide reports aligned once the stage is solved", () => {
+    let j = initialJoints();
+    j = rotate(j, "j1");
+    const g = stageGuide(STAGES[0], j);
+    expect(g.reached).toBe(true);
+    expect(g.hint).toMatch(/Aligned/);
+    expect(g.joints[0].aligned).toBe(true);
+    expect(g.stopsAt).toBe("the signal reaches the platform");
+  });
+
+  it("stageGuide names the exact failing joint in stage 3", () => {
+    // Solve j3a only: the beam turns south, hits straight j3b (init rot 1 =
+    // east-west) and dies there — the stop point must say j3b.
+    let j = initialJoints();
+    j = rotate(j, "j3a", 3);
+    const g = stageGuide(STAGES[2], j);
+    expect(g.reached).toBe(false);
+    expect(g.stopsAt).toContain("j3b");
+    expect(g.hint).toMatch(/turn j3b/);
   });
 
   it("stage 1 teaches the operation: one turn carries the signal", () => {

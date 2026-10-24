@@ -268,3 +268,127 @@ export function alignedCount(joints: JointRotations): number {
   const beams = computeAllBeams(joints);
   return STAGE_IDS.filter((id) => beams[id].reached).length;
 }
+
+/* --------------------- Accessible stage guidance -------------------- */
+
+export const DIR_NAME: Record<Dir, string> = {
+  0: "north",
+  1: "east",
+  2: "south",
+  3: "west",
+};
+
+/** Dominant cardinal direction from one point to another. */
+function dirToward(from: [number, number], to: [number, number]): Dir {
+  const dx = to[0] - from[0];
+  const dz = to[1] - from[1];
+  if (Math.abs(dx) >= Math.abs(dz)) return dx > 0 ? 1 : 3;
+  return dz > 0 ? 2 : 0;
+}
+
+/** "joins east–west" for a straight joint, "joins north to east" for an elbow. */
+export function edgesPhrase(kind: JointDef["kind"], edges: Dir[]): string {
+  const names = edges.map((d) => DIR_NAME[d]);
+  return kind === "straight" ? `joins ${names[0]}–${names[1]}` : `joins ${names[0]} to ${names[1]}`;
+}
+
+const sameDirs = (a: Dir[], b: Dir[]) => a.length === b.length && a.every((d) => b.includes(d));
+
+export interface JointGuide {
+  id: JointId;
+  kind: JointDef["kind"];
+  /** What the joint currently connects, in words. */
+  current: string;
+  /** Edges the working route needs: the side the signal arrives on, then the side it must leave. */
+  needs: [Dir, Dir];
+  /** True when the current rotation already connects the needed edges. */
+  aligned: boolean;
+  /** +1 turns to reach a rotation that connects the needed edges; -1 if impossible. */
+  turnsToAlign: number;
+}
+
+export interface StageGuide {
+  stage: StageId;
+  label: string;
+  /** One-line route: where the signal starts and where it must go. */
+  route: string;
+  reached: boolean;
+  /** Where the signal currently dies, in words, or null when reached. */
+  stopsAt: string;
+  joints: JointGuide[];
+  /** One actionable line. */
+  hint: string;
+}
+
+/**
+ * Textual view of a stage's live routing state — shared by guided mode and
+ * the 3D pause/help panel so both describe the same beam.
+ */
+export function stageGuide(stage: StageDef, joints: JointRotations): StageGuide {
+  const chain: [number, number][] = [
+    stage.source.pos,
+    ...stage.joints.map((j) => j.pos),
+    stage.target.pos,
+  ];
+  const guide: JointGuide[] = stage.joints.map((j, i) => {
+    const needs: [Dir, Dir] = [dirToward(j.pos, chain[i]), dirToward(j.pos, chain[i + 2])];
+    const cur = jointEdges(j.kind, joints[j.id]);
+    let turnsToAlign = -1;
+    for (let k = 0; k < 4; k++) {
+      if (sameDirs(jointEdges(j.kind, joints[j.id] + k), needs)) {
+        turnsToAlign = k;
+        break;
+      }
+    }
+    return {
+      id: j.id,
+      kind: j.kind,
+      current: edgesPhrase(j.kind, cur),
+      needs,
+      aligned: sameDirs(cur, needs),
+      turnsToAlign,
+    };
+  });
+  const res = computeStage(stage, joints);
+  const route = `the plaza emitter fires ${DIR_NAME[stage.source.dir]} toward the ${stage.targetName}`;
+  if (res.reached) {
+    return {
+      stage: stage.id,
+      label: stage.label,
+      route,
+      reached: true,
+      stopsAt: "the signal reaches the platform",
+      joints: guide,
+      hint: `Aligned — the signal reaches the ${stage.targetName} and its causeway is energized.`,
+    };
+  }
+  let stopsAt: string;
+  if (res.lastNode && res.lastNode !== "src") {
+    const stop = guide.find((g) => g.id === res.lastNode);
+    const seg = res.segments[res.segments.length - 1];
+    const entry = seg ? DIR_NAME[dirToward(seg.b, seg.a)] : "emitter";
+    stopsAt = `the signal dies at ${res.lastNode} — it arrives on the ${entry} side, but the joint ${stop?.current ?? "is misaligned"}`;
+  } else {
+    stopsAt = `the beam leaves the emitter heading ${DIR_NAME[stage.source.dir]} and finds nothing`;
+  }
+  const first = guide.find((g) => !g.aligned);
+  const hint = first
+    ? first.turnsToAlign === 1
+      ? `Hint: turn ${first.id} once — the signal must ${first.kind === "straight" ? `pass ${DIR_NAME[first.needs[0]]}–${DIR_NAME[first.needs[1]]}` : `turn from the ${DIR_NAME[first.needs[0]]} side to the ${DIR_NAME[first.needs[1]]} side`} through it; it currently ${first.current}.`
+      : `Hint: turn ${first.id} ${first.turnsToAlign > 0 ? `${first.turnsToAlign} times ` : ""}— it must ${first.kind === "straight" ? `pass ${DIR_NAME[first.needs[0]]}–${DIR_NAME[first.needs[1]]}` : `turn from the ${DIR_NAME[first.needs[0]]} side to the ${DIR_NAME[first.needs[1]]} side`}; it currently ${first.current}.`
+    : "Hint: the route looks aligned — watch where the beam ends in the district.";
+  return {
+    stage: stage.id,
+    label: stage.label,
+    route,
+    reached: false,
+    stopsAt,
+    joints: guide,
+    hint,
+  };
+}
+
+/** +1 turns needed to return a joint to its initial rotation (0-3). */
+export function turnsToInit(current: number, init: number): number {
+  return (((init - current) % 4) + 4) % 4;
+}
