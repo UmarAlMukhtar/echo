@@ -1,47 +1,75 @@
-# Devin Hack Kochi
+# ECHO: The City That Remembers
 
-A repository template for participants at Devin Hack Kochi. It contains event guidance and documentation scaffolding; follow the organizers' current project-start instructions.
+A single-player 3D architectural puzzle-mystery for **Devin Hacks Kochi — Track 4, MAKE ROOM FOR PLAY**. Explore a floating pale-stone canal district inspired by Kochi, rotate relay joints so a visible signal beam energizes the causeways you walk on, reach three memory platforms, hear what three residents remember of the night the signal keeper vanished, and make three decisions that visibly reshape the city — leading to one of three endings.
 
-**[Event rules](RULES.md)** · **[Agent instructions](AGENTS.md)**
+## Repository provenance
 
-## Event details
+This repository began as a documentation template; [RULES.md](RULES.md) and [AGENTS.md](AGENTS.md) still carry historical material from an older event's scaffold — those dates and logistics are template provenance, **not** Devin Hack Kochi's, whose organizer instructions are authoritative. The game itself is implemented here from scratch.
 
-Devin Hack Kochi has no major AI usage constraints. Participants may use Devin and other AI tools, models, and providers; this template does not require Codex or restrict AI usage to OpenAI. AI usage notes are project documentation, not an additional event eligibility requirement.
+## The game
 
-The organizer shared an older event template. Follow the current organizer announcements for logistics, participation format, eligibility, submission timing, and credits; the older template's details do not apply. See [RULES.md](RULES.md).
+- **Setting:** Veli, the Ninth Canal District — a quarter suspended between an erased past and a managed present.
+- **Mystery:** Seven years ago the surge-flood drowned the old quarter and the signal keeper Arjun Varma vanished. Three residents remember him differently.
+- **Play:** ~8–12 minutes. Three escalating signal stages: stand at a relay joint and press E to turn it, watch the teal beam route through causeways, and cross the energized tiles to each memory platform — Mirai (garden), Devi (dock), Ilyas (archive). After each stage a resident's memory unlocks a decision — what the city keeps, whom the grid serves, who holds memory — each of which transforms the district in front of you. States are reversible, resets are intentional, and there are no softlocks.
+- **Endings:** three reachable endings governed by an explicit rule (see [DESIGN.md](DESIGN.md)): all-open → *The City Remembers*; all-sealed → *The Quiet City*; mixed → *The Watcher*.
+- **Saves:** versioned `localStorage` save written at each milestone; corrupt or outdated saves are rejected safely, and blocked storage is reported.
 
-## Use this template
+## Run it
 
-1. Select **Use this template → Create a new repository** on GitHub. Create your own project repository and clone it.
-2. Read [RULES.md](RULES.md) and [AGENTS.md](AGENTS.md) before building. Follow the organizers' current project-start instructions.
-3. Fill in the project overview below as you build. Use any suitable language or framework, keeping the implementation simple.
-4. Record meaningful changes in [CHANGELOG.md](CHANGELOG.md) and, if maintained, your actual AI assistance in [AI_USAGE.md](AI_USAGE.md). Commit after completed milestones; aim for a meaningful checkpoint about every 30 minutes.
-5. Complete [SUBMISSION.md](SUBMISSION.md) with your code repository, short project description, and working demo. Follow submission instructions announced by the organizers.
+Prerequisites: Node.js 20+ (developed on Node 24) and npm.
 
-This template has no application code or required technology stack. The documentation and commit cadence are repository workflow guidance; the event participation rules are in [RULES.md](RULES.md).
+```bash
+npm install
+npm run dev        # http://localhost:3000
+```
 
-## Project overview — complete during the event
+Production:
 
-- **Project name:** TODO
-- **Short description:** TODO — what it does, who it helps, and why it matters.
-- **Team:** TODO — participant names and GitHub handles.
-- **Working demo:** TODO — link or local demo instructions.
-- **Technology stack:** TODO
+```bash
+npm run build && npm start
+```
 
-### Run the project
+Checks:
 
-Replace these placeholders with commands that actually work for your project:
+```bash
+npm run lint       # eslint
+npm run typecheck  # tsc --noEmit
+npm test           # vitest — signal propagation, energized floors, decisions, endings, saves, flow
+npm run build      # production build
+```
 
-1. Prerequisites and versions: TODO
-2. Dependency installation: TODO
-3. Environment setup: TODO — list required variable names and provide a sanitized `.env.example` if needed.
-4. Start the project: TODO
-5. Run checks or tests: TODO
+## Controls
 
-### Current status
+| Input | Action |
+| --- | --- |
+| WASD / arrow keys | Move (diagonals normalized) |
+| Mouse drag / wheel | Orbit camera / zoom |
+| E or Enter | Interact (talk, attune, decide) |
+| Escape | Pause / close overlays |
+| HUD ↯ | Reduced-motion toggle |
+| HUD Aa / title 3D | Switch between 3D and Guided Story Mode |
 
-- Working features: TODO
-- Known limitations: TODO
-- Libraries, APIs, and public datasets used: TODO — include source links and applicable attribution.
+**Guided Story Mode** is a fully playable text-and-buttons version of the same game — same puzzle, decisions and endings — for touch devices, keyboard-only play, or machines without WebGL. It's on the title screen and auto-engages if 3D fails.
 
-See [AI_USAGE.md](AI_USAGE.md) for AI assistance and [CHANGELOG.md](CHANGELOG.md) for the development record.
+## Project structure
+
+- `app/` — Next.js App Router shell
+- `lib/game/` — pure game logic: signal routing (`signal.ts`), story content, endings rule, save schema v2, city floor/colliders, zustand store (unit-tested, no React)
+- `components/scene/` — React Three Fiber scene: platforms + energized tiles, relay spire, beam/joints, NPCs, player rig, decision-driven transformations
+- `components/ui/` — DOM overlays: title, HUD, dialogue, puzzle, decisions, ending, pause
+- `components/story/` — guided story mode
+- `tests/` — vitest suite
+- [DESIGN.md](DESIGN.md) — design and implementation notes
+
+## Technology and assets
+
+- Next.js 15, React 19, TypeScript
+- React Three Fiber 9 + drei 10 + three.js — all visuals are procedural geometry; no external models, textures, fonts, or sounds are downloaded
+- zustand — game state
+- vitest — unit tests
+- No backend, accounts, APIs, or multiplayer
+
+## Status
+
+- Working: full game loop — 3 signal stages with rotatable joints and energized causeways, 3 NPCs, 3 decisions with live city transformations, 3 endings with recap, local save/resume (v2, incl. joint state), guided story mode, pause, reduced motion.
+- Known limitations: no audio (by design — all clues are written); camera orbit is drag-based rather than pointer-lock; story-mode navigation is abstracted to locations.
