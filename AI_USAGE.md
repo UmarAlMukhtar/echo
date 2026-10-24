@@ -1,5 +1,16 @@
 # AI usage record
 
+## Original playable-character asset — 2026-10-25T01:32:40+05:30
+
+- Tool: Codex, Blender 4.5.3 LTS CPU rendering and isolated Three.js 0.180.0.
+- Work: scripted original geometry, four shared materials, vertex colours, rig,
+  Idle/Walk/Interact, previews, loader/animation tests and integration notes.
+- Evidence: Blender and Three.js re-import; evaluated skinning, grounded boots,
+  loop seams, fixed root, material/geometry budgets and byte-identical regeneration.
+- Corrections: foot compensation, scarf overlap, unused UVs and triangle ordering.
+- Human direction: original keeper requested; final artistic feedback optional.
+- Scope: character assets/docs only. Map and application/gameplay source unchanged.
+
 ## Approved environment detailing — 2026-10-25T00:04:38+05:30
 
 - Tool: Codex with Blender 4.5.3 LTS, headless CPU Cycles and standard Python.

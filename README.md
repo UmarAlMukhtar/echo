@@ -71,6 +71,24 @@ npm run build      # production build
 
 ## Status
 
+### Playable character asset (separate integration)
+
+[assets/echo_player](assets/echo_player/README.md) contains the original memory
+keeper: a reproducible Blender generator, editable rig, `echo-player.glb`, front/
+side/game previews, and [integration notes](assets/echo_player/INTEGRATION.md).
+It has 2,064 triangles, four shared materials and three in-place animation clips:
+`Idle` (2.4 s), `Walk` (1.0 s), `Interact` (1.2 s). The GLB is 214,936 bytes.
+The origin is between its feet, 1 unit = 1 meter, +Z forward / +Y up in Three.js.
+It is separate from the map and does not replace the current procedural avatar.
+
+```bash
+blender --background --factory-startup --threads 8 --python-exit-code 1 \
+  --python assets/echo_player/generate_player.py
+blender --background --threads 8 --python-exit-code 1 \
+  --python assets/echo_player/verify_blender.py
+node assets/echo_player/verify_three.mjs
+```
+
 ### Detailed environment asset (separate integration)
 
 The approved district in [assets/echo_memory_district](assets/echo_memory_district/README.md)

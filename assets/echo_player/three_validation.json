@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "loader": "Three.js GLTFLoader",
+  "three_revision": "180",
+  "material_count": 4,
+  "materials": [
+    "Keeper_SlateLilac",
+    "Keeper_Ink",
+    "Keeper_MintLight",
+    "Keeper_WarmAccents"
+  ],
+  "triangles": 2064,
+  "skinned_primitives": 4,
+  "clips": {
+    "Idle": {
+      "duration_s": 2.4000000953674316,
+      "tracks": 54,
+      "minimum_y_m": 4.5978759266023313e-8,
+      "endpoints_match": true,
+      "root_motion": false,
+      "skinning_evaluated": true
+    },
+    "Walk": {
+      "duration_s": 1,
+      "tracks": 54,
+      "minimum_y_m": -1.67443282797414e-8,
+      "endpoints_match": true,
+      "root_motion": false,
+      "skinning_evaluated": true
+    },
+    "Interact": {
+      "duration_s": 1.2000000476837158,
+      "tracks": 54,
+      "minimum_y_m": 4.5978759266023313e-8,
+      "endpoints_match": true,
+      "root_motion": false,
+      "skinning_evaluated": true
+    }
+  },
+  "vertex_colors_preserved": true
+}

@@ -1,5 +1,25 @@
 # Change log
 
+## 2026-10-25T01:32:40+05:30 — Original rigged memory keeper
+
+- Added `assets/echo_player/`: original rounded-hood keeper, single mint lens,
+  slate-lilac coat, peach scarf, brass lantern and visible boots; deterministic
+  Blender generator, editable rig, GLB, six previews and integration/QA reports.
+- Budget: 2,064 triangles, 4 shared materials, 214,936-byte self-contained GLB.
+  An 18-bone rig exports in-place Idle (2.4 s), Walk (1 s), Interact (1.2 s).
+  Origin is on the ground, scale 1 m/unit, GLB +Z forward and Y-up.
+- Checks: two independent exports across worker counts byte-identical; Blender
+  re-import confirmed all materials and clips; actual Three.js 0.180.0 GLTFLoader
+  and AnimationMixer evaluated all skinned clips, vertex colours, loop seams,
+  stationary root and boot ground clearance. Six views inspected, including
+  normal game-camera distance and Interact peak. Syntax and whitespace pass.
+- Corrections: foot rotation compensation, scarf/face overlap, unused UV data and
+  nondeterministic triangle ordering corrected from test/render evidence.
+- Scope: assets and documentation only. Map unchanged from
+  2bc7f2b21f5dae981e127519999ae854870a1584; application/gameplay code untouched.
+- Limits: live-game avatar/controller integration not performed. Runtime loop
+  modes are configured by the animation player as documented in INTEGRATION.md.
+
 ## 2026-10-25T00:12:41+05:30 — Detail approved district and optimize asset exports
 
 - Changed: expanded `assets/echo_memory_district/generate_district.py` with plaza

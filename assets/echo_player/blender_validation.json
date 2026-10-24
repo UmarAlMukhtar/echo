@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "imported_materials": [
+    "Keeper_Ink",
+    "Keeper_MintLight",
+    "Keeper_SlateLilac",
+    "Keeper_WarmAccents"
+  ],
+  "imported_bones": 18,
+  "imported_meshes": 2,
+  "animations_seconds": {
+    "Interact": 1.2,
+    "Walk": 1.0,
+    "Idle": 2.4
+  },
+  "roundtrip_render": "previews/04_glb_roundtrip.png",
+  "interact_peak_render": "previews/05_interact_pose.png",
+  "normal_game_distance_render": "previews/06_game_distance.png",
+  "camera": {
+    "vertical_fov_degrees": 45,
+    "orbit_distance_m": 11,
+    "pitch_radians": 0.72
+  }
+}
