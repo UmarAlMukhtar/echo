@@ -4,7 +4,7 @@ A single-player 3D architectural puzzle-mystery for **Devin Hacks Kochi — Trac
 
 ## Repository provenance
 
-This repository began as a documentation template for the **DevDay Exchange Community Hackathon (10–11 October 2026)**. [RULES.md](RULES.md) and [AGENTS.md](AGENTS.md) are preserved from that scaffold as historical/workflow material — their dates describe the *earlier* DevDay event, **not** Devin Hacks Kochi. The game itself is implemented here from scratch.
+This repository began as a documentation template; [RULES.md](RULES.md) and [AGENTS.md](AGENTS.md) still carry historical material from an older event's scaffold — those dates and logistics are template provenance, **not** Devin Hack Kochi's, whose organizer instructions are authoritative. The game itself is implemented here from scratch.
 
 ## The game
 
