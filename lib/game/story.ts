@@ -110,6 +110,22 @@ export const NPCS: Record<NpcId, NpcContent> = {
   },
 };
 
+/**
+ * Which lines a resident gives. First meetings always get the testimony
+ * (their fragment) — even when the beam already reached their platform,
+ * as with Ilyas whose stage must be aligned to reach him. Repeat visits
+ * get `again` until the relay reveal has played out (narrative progress:
+ * the ending computed from all three decisions), then `afterRelay`.
+ */
+export function pickDialogueLines(
+  npc: NpcContent,
+  repeatVisit: boolean,
+  revealed: boolean
+): string[] {
+  if (!repeatVisit) return npc.firstMeeting;
+  return revealed ? npc.afterRelay : npc.again;
+}
+
 /* ---------------------------- Fragments ---------------------------- */
 
 export interface FragmentContent {

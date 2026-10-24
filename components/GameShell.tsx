@@ -35,6 +35,7 @@ export default function GameShell() {
   const setNotice = useGameStore((s) => s.setNotice);
   const [webglOk, setWebglOk] = useState<boolean | null>(null);
   const [sceneError, setSceneError] = useState(false);
+  const [sceneKey, setSceneKey] = useState(0);
 
   useEffect(() => {
     setWebglOk(webglAvailable());
@@ -81,7 +82,7 @@ export default function GameShell() {
     }
   }, [setNotice]);
 
-  // WebGL missing or the scene failed to mount → story mode with a notice.
+  // WebGL missing → story mode with a notice.
   useEffect(() => {
     if (webglOk === false && mode === "3d") {
       setMode("story");
@@ -89,11 +90,34 @@ export default function GameShell() {
     }
   }, [webglOk, mode, setMode, setNotice]);
 
-  const useStory = mode === "story" || webglOk === false || sceneError;
+  // A latched scene error is recoverable: retry the mount when 3D is the
+  // live view again (Return to 3D, or a fresh run after a failure).
+  useEffect(() => {
+    if (sceneError && mode === "3d" && phase === "playing")
+      setSceneKey((k) => k + 1);
+  }, [sceneError, mode, phase]);
+
+  const useStory = mode === "story" || webglOk === false;
 
   return (
     <div className="game-root">
-      {!useStory && <CityScene onError={() => setSceneError(true)} />}
+      {!useStory && (
+        <CityScene
+          key={sceneKey}
+          onReady={() => setSceneError(false)}
+          onError={() => {
+            setSceneError(true);
+            // Only a real loss while the 3D view is live switches modes;
+            // context disposal on an intentional unmount (mode already
+            // "story", or quitting to title) stays silent here.
+            const s = useGameStore.getState();
+            if (s.mode === "3d" && s.phase !== "title") {
+              s.setMode("story");
+              s.setNotice("3D view lost — switched to Guided Story Mode.");
+            }
+          }}
+        />
+      )}
       {useStory && phase !== "title" && <StoryMode />}
       {phase === "title" && <TitleScreen webglOk={webglOk !== false} />}
       {!useStory && <Hud />}

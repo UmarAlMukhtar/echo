@@ -8,8 +8,9 @@ import {
   INTRO_LINES,
   NPCS,
   REVEAL_LINES,
+  pickDialogueLines,
 } from "@/lib/game/story";
-import { computeAllBeams, stageGuide, turnsToInit } from "@/lib/game/signal";
+import { stageGuide, turnsToInit } from "@/lib/game/signal";
 import { STAGES } from "@/lib/game/signal";
 import type { DecisionId } from "@/lib/game/types";
 
@@ -63,16 +64,12 @@ function IntroOverlay() {
 
 function DialogueOverlay({ npcId }: { npcId: "mirai" | "devi" | "ilyas" }) {
   const npc = NPCS[npcId];
-  const aligned = useGameStore(
-    (s) => computeAllBeams(s.joints).stage3.reached
-  );
+  // Post-reveal = the ending was computed (all three decisions made) or
+  // the ending screen was already viewed — not mere beam alignment.
+  const revealed = useGameStore((s) => s.ending !== null || s.reachedEnding);
   const closeDialogue = useGameStore((s) => s.closeDialogue);
   const repeatVisit = useGameStore((s) => s.repeatVisit);
-  const lines = aligned
-    ? npc.afterRelay
-    : repeatVisit
-      ? npc.again
-      : npc.firstMeeting;
+  const lines = pickDialogueLines(npc, repeatVisit, revealed);
   const [step, setStep] = useState(0);
   const last = step >= lines.length - 1;
   const advance = () => {
@@ -90,7 +87,7 @@ function DialogueOverlay({ npcId }: { npcId: "mirai" | "devi" | "ilyas" }) {
           <span className="npc-role">{npc.role}</span>
         </div>
         <p className="dialogue-line">{lines[step].replace(/\*/g, "")}</p>
-        {last && !aligned && !repeatVisit && (
+        {last && !repeatVisit && (
           <div className="clue-card">
             Signal fragment received: <b>{npc.fragment}</b>
             <br />

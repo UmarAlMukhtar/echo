@@ -14,7 +14,14 @@ import {
   isWalkable,
   slideMove,
 } from "../lib/game/city";
-import { computeEnding, NPC_INTERACTABLES, SPAWN } from "../lib/game/story";
+import {
+  computeEnding,
+  NPC_INTERACTABLES,
+  NPCS,
+  OBJECTIVES,
+  pickDialogueLines,
+  SPAWN,
+} from "../lib/game/story";
 import {
   SAVE_KEY,
   loadSave,
@@ -332,6 +339,24 @@ describe("save validation (v2)", () => {
     expect(data?.talkedTo).toEqual(["mirai"]);
   });
 
+  it("defaults reachedEnding to false and round-trips it when set", () => {
+    expect(validateSave(goodSave())?.reachedEnding).toBe(false);
+    const st = memStorage();
+    writeSave(
+      {
+        fragments: ["tide", "lantern", "rain"],
+        talkedTo: ["mirai", "devi", "ilyas"],
+        joints: initialJoints(),
+        decisions: { retain: true, serve: true, control: true },
+        reachedEnding: true,
+        playerPos: [0, 11.5],
+        mode: "3d",
+      },
+      st
+    );
+    expect(loadSave(st).data?.reachedEnding).toBe(true);
+  });
+
   it("reports none when empty and corrupt for bad JSON", () => {
     const st = memStorage();
     expect(loadSave(st).status).toBe("none");
@@ -545,6 +570,65 @@ describe("game store", () => {
     expect(useGameStore.getState().overlay).toBeNull();
   });
 
+  it("a fresh run's first milestone enables Continue + overwrite guard", () => {
+    const w =
+      (globalThis as { window?: { localStorage?: unknown } }).window ??
+      ((globalThis as { window?: object }).window = {});
+    w.localStorage = memStorage();
+    useGameStore.getState().newGame("3d");
+    expect(useGameStore.getState().hasSave).toBe(false);
+    useGameStore.getState().resume();
+    useGameStore.getState().rotateJoint("j1"); // first persisted milestone
+    expect(useGameStore.getState().hasSave).toBe(true);
+    expect(useGameStore.getState().saveStatus).toBe("ok");
+    useGameStore.getState().toTitle(); // pause -> quit keeps the flag
+    expect(useGameStore.getState().hasSave).toBe(true);
+  });
+
+  it("joint prompts are gated by beam reachability like guided mode", () => {
+    const s = useGameStore.getState();
+    const ids = activeInteractables(s)
+      .filter((i) => i.kind === "joint")
+      .map((i) => i.id);
+    // stage-entry joints prompt; downstream joints do not until powered
+    expect(ids).toEqual(["j1", "j2a", "j3a"]);
+    expect(ids).not.toContain("j2b");
+    // powering j2a's exit opens the prompt on j2b
+    const powered = { ...s, joints: { ...s.joints, j2a: 1 } };
+    expect(
+      activeInteractables(powered)
+        .filter((i) => i.kind === "joint")
+        .map((i) => i.id)
+    ).toContain("j2b");
+    // but rotateJoint itself stays ungated so guided/pause reset works
+    useGameStore.getState().newGame("3d");
+    useGameStore.getState().rotateJoint("j3c");
+    expect(useGameStore.getState().joints.j3c).toBe(3); // init 2 + 1
+  });
+
+  it("Continue after an ending keeps 'walk the city you made'", () => {
+    const w =
+      (globalThis as { window?: { localStorage?: unknown } }).window ??
+      ((globalThis as { window?: object }).window = {});
+    w.localStorage = memStorage();
+    writeSave(
+      {
+        fragments: ["tide", "lantern", "rain"],
+        talkedTo: ["mirai", "devi", "ilyas"],
+        joints: initialJoints(),
+        decisions: { retain: true, serve: true, control: true },
+        reachedEnding: true,
+        playerPos: [0, 11.5],
+        mode: "3d",
+      },
+      w.localStorage as ReturnType<typeof memStorage>
+    );
+    useGameStore.getState().continueGame();
+    const s = useGameStore.getState();
+    expect(s.reachedEnding).toBe(true);
+    expect(s.objective).toBe(OBJECTIVES.wander);
+  });
+
   it("resetToTitle clears progress", () => {
     useGameStore.getState().newGame("3d");
     useGameStore.getState().rotateJoint("j1");
@@ -560,5 +644,27 @@ describe("game store", () => {
     }
     expect(NPC_INTERACTABLES.mirai.position[0]).toBeLessThan(-11);
     expect(NPC_INTERACTABLES.ilyas.position[0]).toBeGreaterThan(10);
+  });
+});
+
+/* ------------------------- dialogue selection ------------------------ */
+
+describe("dialogue line selection", () => {
+  it("first meetings always give testimony — even with the beam aligned", () => {
+    // Ilyas's stage must be aligned to reach him; his first visit must
+    // still hand over the rain fragment, not skip to afterRelay.
+    expect(pickDialogueLines(NPCS.ilyas, false, false)).toBe(
+      NPCS.ilyas.firstMeeting
+    );
+    expect(pickDialogueLines(NPCS.ilyas, false, true)).toBe(
+      NPCS.ilyas.firstMeeting
+    );
+  });
+
+  it("repeat visits use 'again' until the reveal, then 'afterRelay'", () => {
+    expect(pickDialogueLines(NPCS.ilyas, true, false)).toBe(NPCS.ilyas.again);
+    expect(pickDialogueLines(NPCS.ilyas, true, true)).toBe(
+      NPCS.ilyas.afterRelay
+    );
   });
 });

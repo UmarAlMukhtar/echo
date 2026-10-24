@@ -21,6 +21,7 @@ import {
 import {
   computeAllBeams,
   initialJoints,
+  jointReachable,
 } from "./signal";
 import type { JointId, JointRotations, StageId } from "./signal";
 import type {
@@ -131,18 +132,23 @@ function overlayForDecision(id: DecisionId): Overlay {
   return id === "control" ? { kind: "reveal" } : { kind: "decision", id };
 }
 
-function persist(state: GameState): boolean {
-  return writeSave(
+function persist(state: GameState): void {
+  writeSave(
     {
       fragments: state.fragments,
       talkedTo: state.talkedTo,
       joints: state.joints,
       decisions: state.decisions,
+      reachedEnding: state.reachedEnding,
       playerPos: [playerRuntime.pos.x, playerRuntime.pos.z],
       mode: state.mode,
     },
     browserStorage()
   );
+  // Reflect what actually landed in storage — a fresh run's first
+  // milestone must turn on Continue and the title's overwrite guard.
+  const { status } = loadSave(browserStorage());
+  useGameStore.setState({ hasSave: status === "ok", saveStatus: status });
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -197,7 +203,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       joints: data.joints,
       decisions: data.decisions,
       ending: computeEnding(data.decisions) ?? null,
-      reachedEnding: false,
+      reachedEnding: data.reachedEnding,
     };
     set({
       phase: "playing",
@@ -401,7 +407,11 @@ export function activeInteractables(s: {
 }): InteractableSpec[] {
   const list: InteractableSpec[] = [
     ...Object.values(NPC_INTERACTABLES),
-    ...JOINT_INTERACTABLES,
+    // Match guided mode's gating: a joint only prompts when its pedestal
+    // is actually powered/reachable (reset still turns any joint directly).
+    ...JOINT_INTERACTABLES.filter((it) =>
+      jointReachable(it.id as JointId, s.joints)
+    ),
   ];
   if (s.decisions.control !== undefined) list.push(OVERLOOK_INTERACTABLE);
   return list;

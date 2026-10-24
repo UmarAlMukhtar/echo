@@ -18,6 +18,8 @@ export interface SaveData {
   talkedTo: NpcId[];
   joints: JointRotations;
   decisions: Decisions;
+  /** Set once an ending has been viewed — survives reloads. */
+  reachedEnding: boolean;
   playerPos: [number, number];
   mode: "3d" | "story";
   savedAt: number;
@@ -125,6 +127,7 @@ export function validateSave(raw: unknown): SaveData | null {
     talkedTo,
     joints,
     decisions,
+    reachedEnding: s.reachedEnding === true,
     playerPos: normalizePosition(s.playerPos[0], s.playerPos[1], joints),
     mode,
     savedAt: s.savedAt,
@@ -164,12 +167,15 @@ export function loadSave(
 }
 
 export function writeSave(
-  data: Omit<SaveData, "version" | "savedAt">,
+  data: Omit<SaveData, "version" | "savedAt" | "reachedEnding"> & {
+    reachedEnding?: boolean;
+  },
   storage: StorageLike | undefined
 ): boolean {
   if (!storage) return false;
   const payload: SaveData = {
     ...data,
+    reachedEnding: data.reachedEnding ?? false,
     version: SAVE_VERSION,
     savedAt: Date.now(),
   };

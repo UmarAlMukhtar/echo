@@ -1,18 +1,29 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Relay from "./Relay";
 import District from "./District";
 import Npcs from "./Characters";
 import PlayerRig from "./PlayerRig";
 
-export default function CityScene({ onError }: { onError: () => void }) {
+export default function CityScene({
+  onError,
+  onReady,
+}: {
+  onError: () => void;
+  onReady: () => void;
+}) {
+  const canvasEl = useRef<HTMLCanvasElement | null>(null);
+
   useEffect(() => {
     const onCtxLost = () => onError();
     window.addEventListener("webglcontextlost", onCtxLost, true);
-    return () =>
+    return () => {
       window.removeEventListener("webglcontextlost", onCtxLost, true);
+      canvasEl.current?.removeEventListener("webglcontextlost", onError);
+      canvasEl.current = null;
+    };
   }, [onError]);
 
   return (
@@ -22,7 +33,9 @@ export default function CityScene({ onError }: { onError: () => void }) {
       camera={{ position: [14, 11, 14], fov: 45, near: 0.1, far: 260 }}
       gl={{ antialias: true, powerPreference: "default" }}
       onCreated={({ gl }) => {
+        canvasEl.current = gl.domElement;
         gl.domElement.addEventListener("webglcontextlost", onError);
+        onReady();
       }}
       style={{ position: "absolute", inset: 0 }}
     >
