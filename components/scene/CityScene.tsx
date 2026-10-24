@@ -2,7 +2,6 @@
 
 import { Canvas } from "@react-three/fiber";
 import { useEffect } from "react";
-import Buildings from "./Buildings";
 import Relay from "./Relay";
 import District from "./District";
 import Npcs from "./Characters";
@@ -20,30 +19,31 @@ export default function CityScene({ onError }: { onError: () => void }) {
     <Canvas
       dpr={[1, 1.5]}
       shadows
-      camera={{ position: [14, 8, 14], fov: 50, near: 0.1, far: 220 }}
+      camera={{ position: [14, 11, 14], fov: 45, near: 0.1, far: 260 }}
       gl={{ antialias: true, powerPreference: "default" }}
       onCreated={({ gl }) => {
         gl.domElement.addEventListener("webglcontextlost", onError);
       }}
       style={{ position: "absolute", inset: 0 }}
     >
-      <color attach="background" args={["#0a0f14"]} />
-      <fog attach="fog" args={["#0a0f14", 26, 95]} />
-      <hemisphereLight args={["#2e4a55", "#0c0f12", 0.75]} />
+      {/* bright mint atmosphere + soft luminous distance fog */}
+      <color attach="background" args={["#cfe6dd"]} />
+      <fog attach="fog" args={["#cfe6dd", 30, 130]} />
+      <hemisphereLight args={["#fff3dd", "#a99bc0", 1.15]} />
+      <ambientLight intensity={0.3} color="#ffe9d0" />
       <directionalLight
-        position={[14, 22, 10]}
-        intensity={1.1}
+        position={[16, 24, 12]}
+        intensity={1.8}
         color="#ffe3b3"
         castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-25}
-        shadow-camera-right={25}
-        shadow-camera-top={25}
-        shadow-camera-bottom={-25}
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-24}
+        shadow-camera-right={24}
+        shadow-camera-top={24}
+        shadow-camera-bottom={-24}
       />
-      <directionalLight position={[-10, 14, -8]} intensity={0.35} color="#4fd1c5" />
+      <directionalLight position={[-12, 14, -10]} intensity={0.45} color="#7ce8dd" />
       <District />
-      <Buildings />
       <Relay />
       <Npcs />
       <PlayerRig />

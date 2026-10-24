@@ -1,20 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGameStore } from "@/lib/game/store";
 import {
   DECISIONS,
   ENDINGS,
-  FRAGMENTS,
   INTRO_LINES,
   NPCS,
   REVEAL_LINES,
 } from "@/lib/game/story";
-import {
-  checkSolution,
-  cyclePhase,
-  initialSelections,
-} from "@/lib/game/puzzle";
+import { computeAllBeams } from "@/lib/game/signal";
 import type { DecisionId } from "@/lib/game/types";
 
 export default function Overlays() {
@@ -25,8 +20,6 @@ export default function Overlays() {
       return <IntroOverlay />;
     case "dialogue":
       return <DialogueOverlay npcId={overlay.npcId} />;
-    case "puzzle":
-      return <PuzzleOverlay />;
     case "reveal":
       return <RevealOverlay />;
     case "decision":
@@ -69,10 +62,12 @@ function IntroOverlay() {
 
 function DialogueOverlay({ npcId }: { npcId: "mirai" | "devi" | "ilyas" }) {
   const npc = NPCS[npcId];
-  const puzzleSolved = useGameStore((s) => s.puzzleSolved);
+  const aligned = useGameStore(
+    (s) => computeAllBeams(s.joints).stage3.reached
+  );
   const closeDialogue = useGameStore((s) => s.closeDialogue);
   const repeatVisit = useGameStore((s) => s.repeatVisit);
-  const lines = puzzleSolved
+  const lines = aligned
     ? npc.afterRelay
     : repeatVisit
       ? npc.again
@@ -94,7 +89,7 @@ function DialogueOverlay({ npcId }: { npcId: "mirai" | "devi" | "ilyas" }) {
           <span className="npc-role">{npc.role}</span>
         </div>
         <p className="dialogue-line">{lines[step].replace(/\*/g, "")}</p>
-        {last && !puzzleSolved && !repeatVisit && (
+        {last && !aligned && !repeatVisit && (
           <div className="clue-card">
             Signal fragment received: <b>{npc.fragment}</b>
             <br />
@@ -104,77 +99,6 @@ function DialogueOverlay({ npcId }: { npcId: "mirai" | "devi" | "ilyas" }) {
         <div className="button-row">
           <button className="btn primary" onClick={advance} autoFocus>
             {last ? "Leave" : "…"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ----------------------------- Puzzle ------------------------------ */
-
-function PuzzleOverlay() {
-  const [sel, setSel] = useState(initialSelections);
-  const [tried, setTried] = useState(false);
-  const puzzleSolvedNow = useGameStore((s) => s.puzzleSolvedNow);
-  const resume = useGameStore((s) => s.resume);
-  const check = useMemo(() => checkSolution(sel), [sel]);
-  useEscape(resume);
-
-  const attune = () => {
-    if (check.solved) puzzleSolvedNow();
-    else setTried(true);
-  };
-
-  return (
-    <div className="overlay">
-      <div className="panel" role="dialog" aria-label="Memory relay puzzle">
-        <div className="eyebrow">Memory Relay</div>
-        <h2>Align the three voices</h2>
-        <p className="dim">
-          Each resident left you a fragment and a line of truth. Tune every dial
-          to the phase their words describe.
-        </p>
-        <div className="relay-dials">
-          {FRAGMENTS.map((f) => {
-            const cur = f.phases[sel[f.id]];
-            const right = check.correct.includes(f.id);
-            return (
-              <div key={f.id} className={`dial ${tried && right ? "aligned" : ""}`}>
-                <div className="dial-name">{f.label}</div>
-                <div className="dial-glyph" aria-hidden>
-                  {cur.glyph}
-                </div>
-                <div className="dial-phase">{cur.label}</div>
-                <button
-                  className="btn"
-                  onClick={() => setSel((v) => cyclePhase(v, f.id))}
-                  aria-label={`Cycle ${f.label} phase (currently ${cur.label})`}
-                >
-                  Turn dial
-                </button>
-              </div>
-            );
-          })}
-        </div>
-        {tried && !check.solved && (
-          <p className="dim" role="status">
-            {check.correct.length === 0
-              ? "Nothing locks in. Reread the residents' words."
-              : `${check.correct.length} of 3 voices aligned. The relay is listening.`}
-          </p>
-        )}
-        <ul className="clue-list">
-          <li>Mirai — “the tide was still rising when the water took the quarter.”</li>
-          <li>Devi — “his lantern burned at the harbor until the very end.”</li>
-          <li>Ilyas — “the rain had already stopped when we overloaded the relay.”</li>
-        </ul>
-        <div className="button-row">
-          <button className="btn primary" onClick={attune}>
-            Attune the relay
-          </button>
-          <button className="btn" onClick={resume}>
-            Step back
           </button>
         </div>
       </div>

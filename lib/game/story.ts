@@ -6,6 +6,7 @@ import type {
   InteractableSpec,
   NpcId,
 } from "./types";
+import { JOINT_DEFS } from "./signal";
 
 /* ------------------------------------------------------------------ *
  *  ECHO: The City That Remembers — story content                      *
@@ -109,57 +110,19 @@ export const NPCS: Record<NpcId, NpcContent> = {
   },
 };
 
-/* ---------------------------- Puzzle ------------------------------ */
+/* ---------------------------- Fragments ---------------------------- */
 
 export interface FragmentContent {
   id: FragmentId;
   label: string;
   glyph: string;
-  phases: { id: string; label: string; glyph: string }[];
 }
 
 export const FRAGMENTS: FragmentContent[] = [
-  {
-    id: "tide",
-    label: "Tide Fragment",
-    glyph: "◐",
-    phases: [
-      { id: "ebbed", label: "Tide ebbed", glyph: "◡" },
-      { id: "rising", label: "Tide rising", glyph: "▲" },
-      { id: "high", label: "High tide", glyph: "◉" },
-      { id: "still", label: "Still water", glyph: "─" },
-    ],
-  },
-  {
-    id: "lantern",
-    label: "Lantern Fragment",
-    glyph: "✦",
-    phases: [
-      { id: "unlit", label: "Lantern dark", glyph: "○" },
-      { id: "smothered", label: "Lantern smothered", glyph: "◍" },
-      { id: "lit", label: "Lantern lit", glyph: "✦" },
-      { id: "waning", label: "Lantern waning", glyph: "◐" },
-    ],
-  },
-  {
-    id: "rain",
-    label: "Rain Fragment",
-    glyph: "☂",
-    phases: [
-      { id: "falling", label: "Rain falling", glyph: "☂" },
-      { id: "passing", label: "Rain passing", glyph: "☁" },
-      { id: "passed", label: "Rain passed", glyph: "☀" },
-      { id: "returning", label: "Rain returning", glyph: "☈" },
-    ],
-  },
+  { id: "tide", label: "Tide Fragment", glyph: "◐" },
+  { id: "lantern", label: "Lantern Fragment", glyph: "✦" },
+  { id: "rain", label: "Rain Fragment", glyph: "☂" },
 ];
-
-/** The phases that align the relay, drawn from the three residents' clues. */
-export const CORRECT_PHASES: Record<FragmentId, string> = {
-  tide: "rising",
-  lantern: "lit",
-  rain: "passed",
-};
 
 export const REVEAL_LINES: string[] = [
   "The three voices catch — and the relay answers in a light older than the district.",
@@ -190,7 +153,7 @@ export const DECISIONS: Record<DecisionId, DecisionContent> = {
     id: "retain",
     order: 0,
     title: "What does the city keep?",
-    place: "Relay plinth",
+    place: "Garden signal",
     prompt:
       "The relay offers its first file: the drowned quarter, every facade and door, recoverable as living echoes. Or it can be sealed forever, so the district can finally stop looking back.",
     options: [
@@ -212,7 +175,7 @@ export const DECISIONS: Record<DecisionId, DecisionContent> = {
     id: "serve",
     order: 1,
     title: "Whom does the grid serve?",
-    place: "Canal lock, west dock",
+    place: "Dock signal",
     prompt:
       "Power is scarce. The lock can route the grid to the homes and ferries of the living quarter — or feed it to the relay, which burns brighter the more of the past it holds.",
     options: [
@@ -234,7 +197,7 @@ export const DECISIONS: Record<DecisionId, DecisionContent> = {
     id: "control",
     order: 2,
     title: "Who holds the memory?",
-    place: "Archive vault",
+    place: "Archive platform",
     prompt:
       "The archive is whole again. It can be handed back — opened to every resident it records, shard by shard — or locked inside the relay's core, safe and unreadable, under a single guardian seal.",
     options: [
@@ -313,88 +276,80 @@ export function computeEnding(decisions: Decisions): EndingId | null {
 
 /* ----------------------- World / interactables --------------------- */
 
-export const WORLD_BOUNDS = { minX: -19, maxX: 19, minZ: -16, maxZ: 19 };
-
-export const SPAWN: [number, number] = [0, 8];
+export const SPAWN: [number, number] = [0, 11.5];
 
 export const NPC_INTERACTABLES: Record<NpcId, InteractableSpec> = {
   mirai: {
     id: "npc-mirai",
     kind: "npc",
-    position: [7, -5],
-    radius: 2.4,
+    position: [-12.6, -1.5],
+    radius: 2.6,
     label: "Mirai Okafor",
     prompt: "Talk to Mirai",
   },
   devi: {
     id: "npc-devi",
     kind: "npc",
-    position: [-14.5, 0],
-    radius: 2.4,
+    position: [-12.8, 7.6],
+    radius: 2.6,
     label: "Devi Nair",
     prompt: "Talk to Devi",
   },
   ilyas: {
     id: "npc-ilyas",
     kind: "npc",
-    position: [11, 6],
-    radius: 2.4,
+    position: [12.2, -7.2],
+    radius: 2.6,
     label: "Ilyas Rahman",
     prompt: "Talk to Ilyas",
   },
 };
 
-export const RELAY_INTERACTABLE: InteractableSpec = {
-  id: "relay",
-  kind: "relay",
-  position: [0, 0],
-  radius: 3.4,
-  label: "Memory Relay",
-  prompt: "Attune the memory relay",
-};
-
-export const LOCK_INTERACTABLE: InteractableSpec = {
-  id: "lock",
-  kind: "lock",
-  position: [-15, 2.5],
-  radius: 2.4,
-  label: "Canal lock",
-  prompt: "Decide the grid's allegiance",
-};
-
-export const VAULT_INTERACTABLE: InteractableSpec = {
-  id: "vault",
-  kind: "vault",
-  position: [14, 9],
-  radius: 2.6,
-  label: "Archive vault",
-  prompt: "Decide who holds memory",
-};
+/** Rotating relay joints — the manipulable puzzle state. */
+export const JOINT_INTERACTABLES: InteractableSpec[] = JOINT_DEFS.map((j) => ({
+  id: j.id,
+  kind: "joint" as const,
+  position: j.pos,
+  radius: 2.5,
+  label: "Relay joint",
+  prompt: "Turn the relay joint",
+}));
 
 export const OVERLOOK_INTERACTABLE: InteractableSpec = {
   id: "overlook",
   kind: "overlook",
-  position: [0, 15.5],
-  radius: 3.0,
+  position: [0, -11.4],
+  radius: 2.8,
   label: "Overlook",
   prompt: "Let the city speak",
+};
+
+/** Which resident's conversation opens which decision. */
+export const DECISION_OWNER: Record<DecisionId, NpcId> = {
+  retain: "mirai",
+  serve: "devi",
+  control: "ilyas",
 };
 
 /* --------------------------- Objectives ---------------------------- */
 
 export const OBJECTIVES = {
-  meetResidents: "Meet the three residents and gather their signal fragments",
-  attuneRelay: "Attune the memory relay at the plaza",
+  alignGarden: "Turn relay joints to carry the signal west to the garden platform",
+  talkMirai: "Cross the energized causeway and speak with Mirai",
   decideRetain: "The relay asks what the city should keep",
-  decideServe: "Go to the canal lock on the west dock",
-  decideControl: "Go to the archive vault in the northeast",
-  toOverlook: "Climb to the overlook and let the city speak",
+  alignDock: "Route the signal around to the dock platform, south-west",
+  talkDevi: "Cross to the dock and speak with Devi",
+  decideServe: "The relay asks whom the grid should serve",
+  alignArchive: "Complete the long alignment east to the archive platform",
+  talkIlyas: "Cross to the archive and speak with Ilyas",
+  decideControl: "The relay asks who should hold the memory",
+  toOverlook: "Climb the north causeway to the overlook and let the city speak",
   wander: "Walk the city you made",
 };
 
 export const INTRO_LINES: string[] = [
   "Veli, the Ninth Canal District — a quarter suspended between an erased past and a managed present.",
   "Seven years ago the surge-flood came. The old quarter drowned in a night, and Arjun Varma, the signal keeper, vanished with it. The record calls him a defector.",
-  "You are a cartographer of lost places, and the relay at the district's heart has started transmitting again. Three residents keep its fragments. Three different memories of the same man.",
-  "Find them. Align what they remember. Then decide what a city is allowed to forget.",
+  "You are a cartographer of lost places, and the district's relay has started transmitting again. Its signal can carry light across the causeways — but the relay joints are scattered out of true.",
+  "Turn the joints. Carry the signal to the three memory platforms, hear what each resident remembers — then decide what a city is allowed to forget.",
 ];

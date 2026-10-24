@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { playerRuntime, useGameStore } from "@/lib/game/store";
+import { computeAllBeams } from "@/lib/game/signal";
 import TitleScreen from "@/components/ui/TitleScreen";
 import Hud from "@/components/ui/Hud";
 import Overlays from "@/components/ui/Overlays";
@@ -61,6 +62,7 @@ export default function GameShell() {
     (window as unknown as { __echo?: unknown }).__echo = {
       store: useGameStore,
       player: playerRuntime,
+      beams: () => computeAllBeams(useGameStore.getState().joints),
     };
   }, []);
 

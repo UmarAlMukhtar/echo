@@ -13,7 +13,6 @@ export type EndingId = "remembers" | "quiet" | "watcher";
 export type Overlay =
   | { kind: "intro" }
   | { kind: "dialogue"; npcId: NpcId }
-  | { kind: "puzzle" }
   | { kind: "reveal" }
   | { kind: "decision"; id: DecisionId }
   | { kind: "ending" }
@@ -21,9 +20,11 @@ export type Overlay =
 
 export type Decisions = Partial<Record<DecisionId, boolean>>;
 
+export type InteractableKind = "npc" | "joint" | "overlook";
+
 export interface InteractableSpec {
   id: string;
-  kind: "npc" | "relay" | "lock" | "vault" | "overlook";
+  kind: InteractableKind;
   position: [number, number];
   radius: number;
   label: string;

@@ -5,6 +5,12 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGameStore } from "@/lib/game/store";
 import { NPC_INTERACTABLES } from "@/lib/game/story";
+import {
+  JOINT_BY_ID,
+  computeAllBeams,
+  jointReachable,
+} from "@/lib/game/signal";
+import type { JointId, JointRotations, StageId } from "@/lib/game/signal";
 import type { NpcId } from "@/lib/game/types";
 
 /* ------------------------------ Player ----------------------------- */
@@ -157,10 +163,7 @@ export function QuestMarker({ id }: { id: string }) {
   const mesh = useRef<THREE.Mesh>(null!);
   useFrame((state) => {
     const s = useGameStore.getState();
-    const isNpc = id.startsWith("npc-");
-    const active = isNpc
-      ? s.fragments.length < 3 && !s.talkedTo.includes(id.slice(4) as NpcId)
-      : activeId(s) === id;
+    const active = markerActive(s, id);
     if (mesh.current) {
       mesh.current.visible = active;
       if (active && !s.reducedMotion) {
@@ -174,32 +177,43 @@ export function QuestMarker({ id }: { id: string }) {
     <mesh ref={mesh} position={[0, 2.6, 0]} visible={false}>
       <octahedronGeometry args={[0.22, 0]} />
       <meshStandardMaterial
-        color="#0d3a3a"
-        emissive="#4fd1c5"
+        color="#0d4f47"
+        emissive="#2fd8c2"
         emissiveIntensity={2}
       />
     </mesh>
   );
 }
 
-/** Which single interactable should pulse for guidance. */
-function activeId(s: {
-  fragments: string[];
-  puzzleSolved: boolean;
-  decisions: Record<string, boolean | undefined>;
-  ending: string | null;
-  talkedTo: string[];
-}): string | null {
-  if (s.fragments.length < 3) {
-    // nearest unmet resident is closest handled by proximity; mark all unmet
-    return null;
+const NPC_STAGE: Record<NpcId, StageId> = {
+  mirai: "stage1",
+  devi: "stage2",
+  ilyas: "stage3",
+};
+
+/** Which interactables get a guidance marker right now. */
+function markerActive(
+  s: {
+    joints: JointRotations;
+    talkedTo: string[];
+    decisions: Record<string, boolean | undefined>;
+    ending: string | null;
+  },
+  id: string
+): boolean {
+  if (id.startsWith("npc-")) {
+    const npc = id.slice(4) as NpcId;
+    if (s.talkedTo.includes(npc)) return false;
+    const beams = computeAllBeams(s.joints);
+    return beams[NPC_STAGE[npc]].reached;
   }
-  if (!s.puzzleSolved) return "relay";
-  if (s.decisions.retain === undefined) return "relay";
-  if (s.decisions.serve === undefined) return "lock";
-  if (s.decisions.control === undefined) return "vault";
-  if (s.ending === null) return "overlook";
-  return null;
+  if (id === "overlook") {
+    return s.decisions.control !== undefined && s.ending === null;
+  }
+  const def = JOINT_BY_ID.get(id as JointId);
+  if (!def) return false;
+  if (computeAllBeams(s.joints)[def.stage].reached) return false;
+  return jointReachable(id as JointId, s.joints);
 }
 
 export default function Npcs() {

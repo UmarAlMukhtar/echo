@@ -1,22 +1,29 @@
 import type { DecisionId, Decisions, FragmentId, NpcId } from "./types";
-import { WORLD_BOUNDS, SPAWN } from "./story";
-import { resolveCollisions, staticColliders } from "./city";
+import { DECISION_OWNER, SPAWN } from "./story";
+import { PLAZA_SAFE, connectedToPlaza } from "./city";
+import {
+  JOINT_IDS,
+  initialJoints,
+} from "./signal";
+import type { JointId, JointRotations } from "./signal";
 
-export const SAVE_KEY = "echo-save-v1";
-export const SAVE_VERSION = 1;
+export const SAVE_KEY = "echo-save-v2";
+export const SAVE_VERSION = 2;
+/** Keys written by older builds — detected and reported as outdated. */
+export const LEGACY_SAVE_KEYS = ["echo-save-v1"];
 
 export interface SaveData {
   version: number;
   fragments: FragmentId[];
   talkedTo: NpcId[];
-  puzzleSolved: boolean;
+  joints: JointRotations;
   decisions: Decisions;
   playerPos: [number, number];
   mode: "3d" | "story";
   savedAt: number;
 }
 
-export type LoadStatus = "ok" | "none" | "corrupt" | "unavailable";
+export type LoadStatus = "ok" | "none" | "corrupt" | "outdated" | "unavailable";
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -38,12 +45,28 @@ const FRAGMENT_OWNER: Record<FragmentId, NpcId> = {
   rain: "ilyas",
 };
 
-/** Normalize a saved position into a safe spawnable spot. */
-function normalizePosition(x: number, z: number): [number, number] {
-  const p = { x, z };
-  resolveCollisions(p, 0.55, staticColliders(), WORLD_BOUNDS);
-  if (!Number.isFinite(p.x) || !Number.isFinite(p.z)) return [...SPAWN];
-  return [p.x, p.z];
+function validateJoints(raw: unknown): JointRotations | null {
+  const joints = initialJoints();
+  if (typeof raw !== "object" || raw === null) return null;
+  for (const [k, v] of Object.entries(raw)) {
+    if (!JOINT_IDS.includes(k as JointId)) return null;
+    if (typeof v !== "number" || !Number.isInteger(v) || v < 0 || v > 3)
+      return null;
+    joints[k as JointId] = v;
+  }
+  return joints;
+}
+
+/** Normalize a saved position onto floor connected to the plaza. */
+function normalizePosition(
+  x: number,
+  z: number,
+  joints: JointRotations
+): [number, number] {
+  if (connectedToPlaza(x, z, joints)) return [x, z];
+  const [sx, sz] = PLAZA_SAFE;
+  if (connectedToPlaza(sx, sz, joints)) return [sx, sz];
+  return [...SPAWN];
 }
 
 /** Validate an unknown value as a SaveData; returns null when invalid. */
@@ -69,9 +92,8 @@ export function validateSave(raw: unknown): SaveData | null {
   for (const f of fragments) {
     if (!talkedTo.includes(FRAGMENT_OWNER[f])) return null;
   }
-  if (typeof s.puzzleSolved !== "boolean") return null;
-  // The relay puzzle cannot be solved before all three fragments exist.
-  if (s.puzzleSolved && fragments.length < 3) return null;
+  const joints = validateJoints(s.joints);
+  if (!joints) return null;
   if (typeof s.decisions !== "object" || s.decisions === null) return null;
   const decisions: Decisions = {};
   for (const [k, v] of Object.entries(s.decisions)) {
@@ -79,8 +101,11 @@ export function validateSave(raw: unknown): SaveData | null {
       return null;
     decisions[k as DecisionId] = v;
   }
-  // Decisions are ordered: retain ← serve ← control, all gated by the puzzle.
-  if (decisions.retain !== undefined && !s.puzzleSolved) return null;
+  // Decisions are ordered and each needs its resident's conversation.
+  for (const id of DECISION_IDS) {
+    if (decisions[id] !== undefined && !talkedTo.includes(DECISION_OWNER[id]))
+      return null;
+  }
   if (decisions.serve !== undefined && decisions.retain === undefined)
     return null;
   if (decisions.control !== undefined && decisions.serve === undefined)
@@ -98,9 +123,9 @@ export function validateSave(raw: unknown): SaveData | null {
     version: SAVE_VERSION,
     fragments,
     talkedTo,
-    puzzleSolved: s.puzzleSolved,
+    joints,
     decisions,
-    playerPos: normalizePosition(s.playerPos[0], s.playerPos[1]),
+    playerPos: normalizePosition(s.playerPos[0], s.playerPos[1], joints),
     mode,
     savedAt: s.savedAt,
   };
@@ -116,7 +141,20 @@ export function loadSave(
   } catch {
     return { status: "unavailable", data: null };
   }
-  if (raw === null) return { status: "none", data: null };
+  if (raw === null) {
+    // Honest handling for saves from older, incompatible builds.
+    for (const key of LEGACY_SAVE_KEYS) {
+      try {
+        if (storage.getItem(key) !== null) {
+          storage.removeItem(key);
+          return { status: "outdated", data: null };
+        }
+      } catch {
+        return { status: "unavailable", data: null };
+      }
+    }
+    return { status: "none", data: null };
+  }
   try {
     const data = validateSave(JSON.parse(raw));
     return data ? { status: "ok", data } : { status: "corrupt", data: null };
@@ -147,6 +185,7 @@ export function clearSave(storage: StorageLike | undefined): void {
   if (!storage) return;
   try {
     storage.removeItem(SAVE_KEY);
+    for (const key of LEGACY_SAVE_KEYS) storage.removeItem(key);
   } catch {
     /* unavailable storage: nothing to clear */
   }

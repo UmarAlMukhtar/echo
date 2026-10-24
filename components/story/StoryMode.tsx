@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { activeInteractables, useGameStore } from "@/lib/game/store";
+import { useGameStore } from "@/lib/game/store";
+import {
+  STAGES,
+  computeAllBeams,
+  jointReachable,
+} from "@/lib/game/signal";
+import type { JointId } from "@/lib/game/signal";
 import type { InteractableSpec } from "@/lib/game/types";
 
 interface Place {
@@ -10,43 +16,42 @@ interface Place {
   desc: string;
   /** interactable ids reachable from here */
   spots: string[];
+  /** stage whose beam must connect before travelling here */
+  gate?: "stage1" | "stage2" | "stage3";
 }
 
 const PLACES: Place[] = [
   {
     id: "plaza",
     name: "Relay Plaza",
-    desc: "Charcoal paving under the relay's slow-turning rings. Cables run from its crown to every roof in the district. The whole city seems to be listening through it.",
-    spots: ["relay"],
+    desc: "Pale paving around the spire, its rings turning slowly above. Three emitters face the causeways; the relay joints wait to be turned.",
+    spots: [],
   },
   {
     id: "garden",
-    name: "Relay Garden",
-    desc: "A rooftop garden transplanted to street level — stubborn green under cyan light. Mirai tends it in silence.",
+    name: "Garden Platform",
+    desc: "A coral arch over stubborn green. Mirai tends the beds the flood was meant to take.",
     spots: ["npc-mirai"],
+    gate: "stage1",
   },
   {
     id: "dock",
-    name: "West Dock",
-    desc: "Deep teal canal water lapping at a wooden bridge. A ferry rocks against its posts; a lantern hangs unlit at the gate.",
-    spots: ["npc-devi", "lock"],
+    name: "Dock Platform",
+    desc: "Wooden boards over luminous mist where the canal used to be. A lantern hangs unlit at the gate; Devi watches it.",
+    spots: ["npc-devi"],
+    gate: "stage2",
   },
   {
-    id: "workshop",
-    name: "Workshop Row",
-    desc: "Condenser fans, spooled cable, the smell of ozone. Ilyas's bench faces the relay like a confessional.",
+    id: "archive",
+    name: "Archive Platform",
+    desc: "A squat drum of ivory and peach facing the spire. Ilyas's bench waits beside the last joint.",
     spots: ["npc-ilyas"],
-  },
-  {
-    id: "vault",
-    name: "Archive Vault",
-    desc: "A squat limestone drum in the northeast quarter, sealed with a signal ring. Whatever the district kept, it kept it here.",
-    spots: ["vault"],
+    gate: "stage3",
   },
   {
     id: "overlook",
     name: "The Overlook",
-    desc: "A stone brow above the plaza. From here the whole district is legible at once: canal, gardens, cables, ghosts if there are any.",
+    desc: "A high brow north of the plaza. The whole district reads at once: spire, beams, platforms, ghosts if there are any.",
     spots: ["overlook"],
   },
 ];
@@ -54,14 +59,15 @@ const PLACES: Place[] = [
 export default function StoryMode() {
   const [place, setPlace] = useState("plaza");
   const s = useGameStore();
-  const active = activeInteractables(s);
+  const beams = computeAllBeams(s.joints);
   const here = PLACES.find((p) => p.id === place)!;
-  const interactHere = active.filter((a) => here.spots.includes(a.id));
   const overlayOpen = s.overlay !== null;
 
-  const travel = (id: string) => {
-    setPlace(id);
-  };
+  const reachableJoints = (jid: JointId) => jointReachable(jid, s.joints);
+
+  const canTravel = (p: Place) => !p.gate || beams[p.gate].reached;
+
+  const doInteract = (it: InteractableSpec) => s.interact(it);
 
   return (
     <div className="story-mode">
@@ -73,26 +79,136 @@ export default function StoryMode() {
 
         {!overlayOpen && (
           <>
-            {interactHere.length > 0 && (
-              <div className="story-map" role="group" aria-label="Things to do here">
-                {interactHere.map((it: InteractableSpec) => (
-                  <button
-                    key={it.id}
-                    className="btn primary"
-                    onClick={() => s.interact(it)}
-                  >
-                    {it.prompt}
-                  </button>
-                ))}
-              </div>
+            {/* signal routing — equivalent to walking to each joint in 3D */}
+            <div className="eyebrow" style={{ marginTop: 18 }}>
+              Signal routing
+            </div>
+            {STAGES.map((st) => {
+              const res = beams[st.id];
+              return (
+                <div key={st.id} className="story-scene" style={{ marginTop: 8 }}>
+                  <div>
+                    <b>{st.label}</b> —{" "}
+                    {res.reached
+                      ? `the signal reaches the ${st.targetName}.`
+                      : res.edges.length > 0
+                        ? "the beam travels partway and dies."
+                        : "the beam is blocked at the first joint."}
+                  </div>
+                  <div className="story-map" role="group" aria-label={`${st.label} joints`}>
+                    {st.joints.map((j) => {
+                      const ok = reachableJoints(j.id);
+                      return (
+                        <button
+                          key={j.id}
+                          className="btn"
+                          disabled={!ok}
+                          title={
+                            ok
+                              ? "Turn the relay joint"
+                              : "The beam hasn't reached this pedestal yet"
+                          }
+                          onClick={() =>
+                            doInteract({
+                              id: j.id,
+                              kind: "joint",
+                              position: j.pos,
+                              radius: 0,
+                              label: "Relay joint",
+                              prompt: "Turn the relay joint",
+                            })
+                          }
+                        >
+                          Turn joint ({j.id}) {ok ? "" : "· unreachable"}
+                        </button>
+                      );
+                    })}
+                    <button
+                      className="btn"
+                      title="Return every joint in this stage to its starting angle"
+                      onClick={() => {
+                        for (const j of st.joints) {
+                          const cur = s.joints[j.id];
+                          const turns = (4 - ((cur - j.init) % 4)) % 4;
+                          for (let i = 0; i < turns; i++) s.rotateJoint(j.id);
+                        }
+                      }}
+                    >
+                      Reset stage
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {here.spots.length > 0 && (
+              <>
+                <div className="eyebrow" style={{ marginTop: 22 }}>
+                  Here
+                </div>
+                <div className="story-map" role="group" aria-label="Things to do here">
+                  {here.spots.map((sid) => {
+                    const isNpc = sid.startsWith("npc-");
+                    if (isNpc) {
+                      return (
+                        <button
+                          key={sid}
+                          className="btn primary"
+                          onClick={() =>
+                            doInteract({
+                              id: sid,
+                              kind: "npc",
+                              position: [0, 0],
+                              radius: 0,
+                              label: sid,
+                              prompt: `Talk to ${sid.replace("npc-", "")}`,
+                            })
+                          }
+                        >
+                          {`Talk to ${sid.replace("npc-", "")}`}
+                        </button>
+                      );
+                    }
+                    return (
+                      <button
+                        key={sid}
+                        className="btn primary"
+                        disabled={s.decisions.control === undefined}
+                        onClick={() =>
+                          doInteract({
+                            id: sid,
+                            kind: "overlook",
+                            position: [0, 0],
+                            radius: 0,
+                            label: "Overlook",
+                            prompt: "Let the city speak",
+                          })
+                        }
+                      >
+                        Let the city speak
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
             )}
+
             <div className="eyebrow" style={{ marginTop: 22 }}>
               Walk to
             </div>
             <div className="story-map" role="group" aria-label="Travel">
               {PLACES.filter((p) => p.id !== place).map((p) => (
-                <button key={p.id} className="btn" onClick={() => travel(p.id)}>
+                <button
+                  key={p.id}
+                  className="btn"
+                  disabled={!canTravel(p)}
+                  title={
+                    canTravel(p) ? `Walk to ${p.name}` : "The causeway is unpowered — align the signal"
+                  }
+                  onClick={() => setPlace(p.id)}
+                >
                   {p.name}
+                  {!canTravel(p) && " · unpowered"}
                 </button>
               ))}
             </div>

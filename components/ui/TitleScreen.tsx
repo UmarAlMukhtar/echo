@@ -44,6 +44,12 @@ export default function TitleScreen({ webglOk }: { webglOk: boolean }) {
               A saved game was found but couldn&apos;t be read — it was cleared.
             </p>
           )}
+          {saveStatus === "outdated" && (
+            <p className="dim" role="status">
+              A save from an older build was found — it can&apos;t continue in
+              this version and was cleared.
+            </p>
+          )}
           {saveStatus === "unavailable" && (
             <p className="dim" role="status">
               Saves are unavailable in this browser; progress won&apos;t persist.
