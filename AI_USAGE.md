@@ -43,3 +43,9 @@ This preparation is separate from participant project implementation and partici
 - Verification: real UI/WASD/E browser playthrough plus automated project checks; see [integration verification](docs/assets/VERIFICATION.md). Human design/code review remains pending; automated review is not human approval.
 
 - Final production review: all three endings reached through real UI; guided save/reload and 3D recovery checked. A controlled missing-map case confirmed cache retry and revealed absent title feedback; Codex added the existing notice to the title. 74 tests, typecheck, lint and production build passed. Explicit retry also clears stale fallback feedback. Hosted preview requires Vercel team authorization (403); no hosted success claimed.
+
+## Hosted preview preparation — 2026-10-25T03:39:39+05:30
+
+- Tool: Codex, using the owner's signed-in Vercel browser after the connector continued to reject team scope with 403 despite consent.
+- Contribution: created the separate ECHO project, connected its existing GitHub repository, configured Next.js/Node.js 24 and confirmed main as the production branch. Canceled a manual build that Vercel classified as Production despite its Preview action label. Prepared Git preview instructions and corrected stale submission art/test/SHA information. No application code or php2shell-live changes.
+- Validation: settings and cancellation were observed in Vercel; documentation whitespace/link checks. Hosted gameplay verification remains a separate next step. Human review and event submission remain pending; no merge.

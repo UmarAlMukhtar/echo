@@ -38,6 +38,17 @@ npm test           # vitest — signals, imported asset contracts/animations, ra
 npm run build      # production build
 ```
 
+## Hosted preview
+
+The ECHO Vercel project is [umar-al-mukhtar-s-projects/echo](https://vercel.com/umar-al-mukhtar-s-projects/echo).
+It uses the repository root, the Next.js preset and Node.js 24. Pushes to
+`codex/blender-integration` create Git previews; `main` remains the production
+branch. Deployment status and preview links are listed in
+[Deployments](https://vercel.com/umar-al-mukhtar-s-projects/echo/deployments).
+A configured project is not proof of a working hosted game; see
+[integration verification](docs/assets/VERIFICATION.md) for the checks performed.
+No environment variables or external game services are required.
+
 ## Controls
 
 | Input | Action |

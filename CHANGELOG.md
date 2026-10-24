@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-10-25T03:39:39+05:30 — Configure ECHO Git previews and refresh demo handoff
+
+- Changed: created a separate ECHO Vercel project connected to UmarAlMukhtar/echo, with the Next.js preset, Node.js 24 and main as its production branch. Added preview setup/status links to README, and corrected SUBMISSION's stale implementation SHA, 49-test count and procedural-only asset claim. Updated integration verification and AI usage with actual access/setup evidence.
+- Why: the owner authorized publishing the committed integration. The connector still returned 403 after consent, while the signed-in browser worked. Vercel classified its manual Preview action as Production; that build was canceled before readiness. Git branch previews will be used instead.
+- Validation: observed project settings, exact source d689735 and canceled status in Vercel; documentation whitespace/local-link checks. Application code is unchanged, so the previous 74-test/build results remain the implementation evidence; hosted gameplay checks are pending.
+- Limitations: no public/hosted readiness claim yet, no protection changes, no automatic merge or event submission.
+
 ## 2026-10-25T02:25:20+05:30 — Final production verification and title fallback feedback
 
 - Changed: title screen renders the existing notice and explicit 3D retries clear stale feedback so a first-load model failure is explained before a run starts. Added final production replay/recovery evidence to integration documentation.

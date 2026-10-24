@@ -36,7 +36,11 @@ separately. No automatic merge or unrelated repository changes.
 ## Preview access
 
 Local production URL: `http://127.0.0.1:43100/` while the preview process runs.
-A Vercel deployment attempt produced no usable URL. The connected Vercel account
-then returned 403 for its default `umar-al-mukhtar-s-projects` team and requires
-the user's team-access approval before a hosted preview can be created. No
-protection was disabled or credentials bypassed.
+The Vercel connector continued to return team-scope 403 after the owner's
+consent. The signed-in browser provided access, so Codex created the separate
+ECHO project, connected only UmarAlMukhtar/echo, selected Next.js and Node.js 24,
+and confirmed that `main` remains the production branch. The manual action
+labeled Create Preview Deployment incorrectly returned a Production build;
+that build was canceled before it became ready. Git preview deployment of the
+integration branch is the next verification step. No protection was disabled,
+credentials bypassed, or unrelated project changed.
