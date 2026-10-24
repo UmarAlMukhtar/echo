@@ -133,7 +133,8 @@ function overlayForDecision(id: DecisionId): Overlay {
 }
 
 function persist(state: GameState): void {
-  writeSave(
+  const storage = browserStorage();
+  const wrote = writeSave(
     {
       fragments: state.fragments,
       talkedTo: state.talkedTo,
@@ -143,12 +144,26 @@ function persist(state: GameState): void {
       playerPos: [playerRuntime.pos.x, playerRuntime.pos.z],
       mode: state.mode,
     },
-    browserStorage()
+    storage
   );
   // Reflect what actually landed in storage — a fresh run's first
   // milestone must turn on Continue and the title's overwrite guard.
-  const { status } = loadSave(browserStorage());
-  useGameStore.setState({ hasSave: status === "ok", saveStatus: status });
+  const { status } = loadSave(storage);
+  useGameStore.setState({
+    hasSave: status === "ok",
+    saveStatus: status,
+    // A failed write to present-but-broken storage must surface as
+    // feedback — an older readable save still keeps Continue via
+    // hasSave, but must not masquerade as a successful persist of this
+    // milestone. (No storage at all is already covered by the startup
+    // banner, so it doesn't spam every milestone.)
+    ...(storage && !wrote
+      ? {
+          lastNotice:
+            "Couldn't save progress — browser storage is unavailable.",
+        }
+      : {}),
+  });
 }
 
 export const useGameStore = create<GameState>((set, get) => ({

@@ -614,6 +614,32 @@ describe("game store", () => {
     expect(useGameStore.getState().hasSave).toBe(true);
   });
 
+  it("a failed milestone write surfaces a notice but keeps the older save", () => {
+    const older = memStorage();
+    writeSave(goodSave() as never, older); // an earlier readable snapshot
+    // setItem throws for the save key only (the storage probe in
+    // browserStorage must still pass), while getItem serves the old save.
+    const failing: StorageLike = {
+      getItem: (k) => older.getItem(k),
+      setItem: (k, v) => {
+        if (k === SAVE_KEY) throw new Error("quota");
+        older.setItem(k, v);
+      },
+      removeItem: (k) => older.removeItem(k),
+    };
+    const w =
+      (globalThis as { window?: { localStorage?: unknown } }).window ??
+      ((globalThis as { window?: object }).window = {});
+    w.localStorage = failing;
+    useGameStore.getState().continueGame(); // resume the older save
+    useGameStore.getState().rotateJoint("j1"); // milestone write fails
+    const s = useGameStore.getState();
+    expect(s.lastNotice).toMatch(/couldn't save/i);
+    expect(s.hasSave).toBe(true); // older save still offers Continue
+    expect(s.saveStatus).toBe("ok");
+    w.localStorage = memStorage();
+  });
+
   it("joint prompts are gated by beam reachability like guided mode", () => {
     const s = useGameStore.getState();
     const ids = activeInteractables(s)

@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-10-24T17:58:00+00:00 — Failed milestone writes surface feedback
+
+- Changed: `lib/game/store.ts` — `persist` now uses `writeSave`'s result: when storage exists but the write throws, `lastNotice` becomes "Couldn't save progress — browser storage is unavailable." instead of silently reloading an older valid save and reporting `saveStatus:"ok"` as if the milestone persisted. The older save still keeps `hasSave`/`saveStatus` from what is actually stored, so Continue and the overwrite guard reflect reality. No storage at all stays covered by the startup banner rather than spamming every milestone.
+- Why: Codex browser automation error-path review — `persist` ignored `writeSave`'s false result, so a failed milestone write reported ok.
+- Validation: `npx tsc --noEmit` clean, `npm run lint` clean, `npx vitest run` 61/61 (new regression: `setItem` throws for the save key while `getItem` returns an older valid snapshot — notice surfaces, older save still offers Continue), `npm run build` clean; production preview restarted and serving HTTP 200.
+- Limitations: none new.
+
 ## 2026-10-24T17:56:00+00:00 — Element-scoped context-loss + save hardening
 
 - Changed: `components/scene/CityScene.tsx` — the global `window` `webglcontextlost` capture listener (which let a newly mounted listener catch the OLD canvas's delayed disposal event and revert to guided mode) is replaced by a `ContextLossWatcher` inside the Canvas: `useThree` binds the handler directly to the live `gl.domElement`, effect keyed on `gl` removes any registration race with `onCreated`, and cleanup on unmount removes the listener so intentional disposal can never reach a fresh mount. `components/story/StoryMode.tsx` + `app/globals.css` — `lastNotice` now renders as `.story-notice` in guided mode (it was previously only in Hud, which guided mode hides), so the real fallback explanation is visible there. `lib/game/save.ts` — `normalizePosition` now requires both `connectedToPlaza` AND `isWalkable` for the restored point and its plaza fallback (a saved point inside the solid relay plinth connected to floor but could never be walked out of — no more invisible softlock); `reachedEnding` validation rejects non-boolean values and `true` without all three decisions (absent still defaults false for older v2 saves).
