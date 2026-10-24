@@ -7,7 +7,6 @@ import {
   computeAllBeams,
   jointReachable,
   stageGuide,
-  turnsToInit,
 } from "@/lib/game/signal";
 import type { JointId } from "@/lib/game/signal";
 import type { InteractableSpec } from "@/lib/game/types";
@@ -26,7 +25,7 @@ const PLACES: Place[] = [
   {
     id: "plaza",
     name: "Relay Plaza",
-    desc: "Pale paving around the spire, its rings turning slowly above. Three emitters face the causeways; the relay joints wait to be turned.",
+    desc: "Pale paving around a brass astrolabe. Three emitters face the causeways; the relay joints wait to be turned.",
     spots: [],
   },
   {
@@ -39,7 +38,7 @@ const PLACES: Place[] = [
   {
     id: "dock",
     name: "Dock Platform",
-    desc: "Wooden boards over luminous mist where the canal used to be. A lantern hangs unlit at the gate; Devi watches it.",
+    desc: "An ivory ferry platform over luminous mist where the canal used to be. A lantern hangs unlit at the gate; Devi watches it.",
     spots: ["npc-devi"],
     gate: "stage2",
   },
@@ -53,7 +52,7 @@ const PLACES: Place[] = [
   {
     id: "overlook",
     name: "The Overlook",
-    desc: "A high brow north of the plaza. The whole district reads at once: spire, beams, platforms, ghosts if there are any.",
+    desc: "The south edge of the plaza. The whole district reads at once: astrolabe, beams, platforms, ghosts if there are any.",
     spots: ["overlook"],
   },
 ];
@@ -115,14 +114,21 @@ export default function StoryMode() {
               const res = beams[st.id];
               const guide = stageGuide(st, s.joints);
               return (
-                <div key={st.id} className="story-scene" style={{ marginTop: 8 }}>
+                <div
+                  key={st.id}
+                  className="story-scene"
+                  style={{ marginTop: 8 }}
+                >
                   <div>
                     <b>{st.label}</b> — {guide.route};{" "}
                     {res.reached
                       ? `the signal reaches the ${st.targetName}.`
                       : `${guide.stopsAt}.`}
                   </div>
-                  <div className="story-joints" aria-label={`${st.label} joint connections`}>
+                  <div
+                    className="story-joints"
+                    aria-label={`${st.label} joint connections`}
+                  >
                     {guide.joints.map((jg) => (
                       <span key={jg.id} className="dim">
                         {jg.id} {jg.current}
@@ -130,8 +136,14 @@ export default function StoryMode() {
                       </span>
                     ))}
                   </div>
-                  {showHints && !res.reached && <div className="story-hint">{guide.hint}</div>}
-                  <div className="story-map" role="group" aria-label={`${st.label} joints`}>
+                  {showHints && !res.reached && (
+                    <div className="story-hint">{guide.hint}</div>
+                  )}
+                  <div
+                    className="story-map"
+                    role="group"
+                    aria-label={`${st.label} joints`}
+                  >
                     {st.joints.map((j) => {
                       const ok = reachableJoints(j.id);
                       return (
@@ -162,12 +174,7 @@ export default function StoryMode() {
                     <button
                       className="btn"
                       title="Return every joint in this stage to its starting angle"
-                      onClick={() => {
-                        for (const j of st.joints) {
-                          const turns = turnsToInit(s.joints[j.id], j.init);
-                          for (let i = 0; i < turns; i++) s.rotateJoint(j.id);
-                        }
-                      }}
+                      onClick={() => s.resetStage(st.id)}
                     >
                       Reset stage
                     </button>
@@ -181,7 +188,11 @@ export default function StoryMode() {
                 <div className="eyebrow" style={{ marginTop: 22 }}>
                   Here
                 </div>
-                <div className="story-map" role="group" aria-label="Things to do here">
+                <div
+                  className="story-map"
+                  role="group"
+                  aria-label="Things to do here"
+                >
                   {here.spots.map((sid) => {
                     const isNpc = sid.startsWith("npc-");
                     if (isNpc) {
@@ -238,7 +249,9 @@ export default function StoryMode() {
                   className="btn"
                   disabled={!canTravel(p)}
                   title={
-                    canTravel(p) ? `Walk to ${p.name}` : "The causeway is unpowered — align the signal"
+                    canTravel(p)
+                      ? `Walk to ${p.name}`
+                      : "The causeway is unpowered — align the signal"
                   }
                   onClick={() => setPlace(p.id)}
                 >

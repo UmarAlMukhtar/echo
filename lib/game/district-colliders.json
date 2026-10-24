@@ -1,0 +1,690 @@
+{
+  "sourceSha256": "43f03fd8c91155327f6c0364a721e402d9cac337af92f8f556155e043a318835",
+  "colliders": [
+    {
+      "name": "COL_ARCH_ARCHIVE_POST_-1",
+      "x0": -1.95,
+      "z0": -13.625,
+      "x1": -1.4,
+      "z1": -12.975,
+      "y0": 1.5,
+      "y1": 4.2,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCH_ARCHIVE_POST_1",
+      "x0": 1.4,
+      "z0": -13.625,
+      "x1": 1.95,
+      "z1": -12.975,
+      "y0": 1.5,
+      "y1": 4.2,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCH_GARDEN_POST_-1",
+      "x0": -14.75,
+      "z0": -1.925,
+      "x1": -14.3,
+      "z1": -1.275,
+      "y0": 0.6,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCH_GARDEN_POST_1",
+      "x0": -11.7,
+      "z0": -1.925,
+      "x1": -11.25,
+      "z1": -1.275,
+      "y0": 0.6,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCHIVE_SEAT_-1",
+      "x0": -2.6,
+      "z0": -10.525,
+      "x1": -1.6,
+      "z1": -10.075,
+      "y0": 1.5,
+      "y1": 2.06,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCHIVE_SEAT_1",
+      "x0": 1.6,
+      "z0": -10.525,
+      "x1": 2.6,
+      "z1": -10.075,
+      "y0": 1.5,
+      "y1": 2.06,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCHIVE_SHELF_-1",
+      "x0": -2.74,
+      "z0": -12.42,
+      "x1": -1.66,
+      "z1": -11.78,
+      "y0": 1.5,
+      "y1": 3.62,
+      "bridge": null
+    },
+    {
+      "name": "COL_ARCHIVE_SHELF_1",
+      "x0": 1.66,
+      "z0": -12.42,
+      "x1": 2.74,
+      "z1": -11.78,
+      "y0": 1.5,
+      "y1": 3.62,
+      "bridge": null
+    },
+    {
+      "name": "COL_CENTRAL_RELAY",
+      "x0": -0.8,
+      "z0": -0.8,
+      "x1": 0.8,
+      "z1": 0.8,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_DOCK_BOLLARD_0",
+      "x0": 9.5,
+      "z0": 3.7,
+      "x1": 9.9,
+      "z1": 4.1,
+      "y0": 0,
+      "y1": 0.68,
+      "bridge": null
+    },
+    {
+      "name": "COL_DOCK_BOLLARD_1",
+      "x0": 11.8,
+      "z0": 3.7,
+      "x1": 12.2,
+      "z1": 4.1,
+      "y0": 0,
+      "y1": 0.68,
+      "bridge": null
+    },
+    {
+      "name": "COL_DOCK_BOLLARD_2",
+      "x0": 14.1,
+      "z0": 3.7,
+      "x1": 14.5,
+      "z1": 4.1,
+      "y0": 0,
+      "y1": 0.68,
+      "bridge": null
+    },
+    {
+      "name": "COL_DOCK_STATION_-1",
+      "x0": 9.8,
+      "z0": -2.125,
+      "x1": 10.1,
+      "z1": -1.675,
+      "y0": 0,
+      "y1": 1.9,
+      "bridge": null
+    },
+    {
+      "name": "COL_DOCK_STATION_1",
+      "x0": 12,
+      "z0": -2.125,
+      "x1": 12.3,
+      "z1": -1.675,
+      "y0": 0,
+      "y1": 1.9,
+      "bridge": null
+    },
+    {
+      "name": "COL_GARDEN_BENCH",
+      "x0": -15.71,
+      "z0": -0.34,
+      "x1": -14.39,
+      "z1": 0.14,
+      "y0": 0.6,
+      "y1": 1.2,
+      "bridge": null
+    },
+    {
+      "name": "COL_GARDEN_COURT",
+      "x0": -11.68,
+      "z0": -2.83,
+      "x1": -10.52,
+      "z1": -1.67,
+      "y0": 0.6,
+      "y1": 1.2,
+      "bridge": null
+    },
+    {
+      "name": "COL_GARDEN_HERBS",
+      "x0": -11.68,
+      "z0": 1.52,
+      "x1": -10.52,
+      "z1": 2.68,
+      "y0": 0.6,
+      "y1": 1.2,
+      "bridge": null
+    },
+    {
+      "name": "COL_GARDEN_TREE",
+      "x0": -15.58,
+      "z0": 1.02,
+      "x1": -14.42,
+      "z1": 2.18,
+      "y0": 0.6,
+      "y1": 1.2,
+      "bridge": null
+    },
+    {
+      "name": "COL_MASS_ARCHIVE",
+      "x0": 1.5,
+      "z0": -14.25,
+      "x1": 3,
+      "z1": -12.75,
+      "y0": 1.35,
+      "y1": 6.05,
+      "bridge": null
+    },
+    {
+      "name": "COL_MASS_DOCK",
+      "x0": 13.35,
+      "z0": -2.05,
+      "x1": 14.85,
+      "z1": -0.55,
+      "y0": -0.15,
+      "y1": 4.35,
+      "bridge": null
+    },
+    {
+      "name": "COL_MASS_GARDEN",
+      "x0": -15.95,
+      "z0": -2.55,
+      "x1": -14.45,
+      "z1": -1.05,
+      "y0": 0.45,
+      "y1": 4.15,
+      "bridge": null
+    },
+    {
+      "name": "COL_MEMORY_01_GARDEN",
+      "x0": -16,
+      "z0": -3,
+      "x1": -10,
+      "z1": 3,
+      "y0": -0.2,
+      "y1": 0.6,
+      "bridge": null,
+      "plane": [
+        0,
+        0,
+        0.6
+      ]
+    },
+    {
+      "name": "COL_MEMORY_02_DOCK",
+      "x0": 9,
+      "z0": -2.5,
+      "x1": 15,
+      "z1": 4.5,
+      "y0": -0.8,
+      "y1": 0,
+      "bridge": null,
+      "plane": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "COL_MEMORY_03_ARCHIVE",
+      "x0": -3,
+      "z0": -14.5,
+      "x1": 3,
+      "z1": -9.5,
+      "y0": 0.7,
+      "y1": 1.5,
+      "bridge": null,
+      "plane": [
+        0,
+        0,
+        1.5
+      ]
+    },
+    {
+      "name": "COL_RAIL_ARCHIVE_0",
+      "x0": -2.935,
+      "z0": -14.36,
+      "x1": -2.785,
+      "z1": -9.64,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_ARCHIVE_1",
+      "x0": 2.785,
+      "z0": -14.36,
+      "x1": 2.935,
+      "z1": -9.64,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_ARCHIVE_2",
+      "x0": -2.86,
+      "z0": -14.435,
+      "x1": 2.86,
+      "z1": -14.285,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_ARCHIVE_3",
+      "x0": -2.86,
+      "z0": -9.715,
+      "x1": -1.55,
+      "z1": -9.565,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_ARCHIVE_4",
+      "x0": 1.55,
+      "z0": -9.715,
+      "x1": 2.86,
+      "z1": -9.565,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_DOCK_0",
+      "x0": 14.785,
+      "z0": -2.36,
+      "x1": 14.935,
+      "z1": 4.36,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_DOCK_1",
+      "x0": 9.14,
+      "z0": 4.285,
+      "x1": 14.86,
+      "z1": 4.435,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_DOCK_2",
+      "x0": 9.14,
+      "z0": -2.435,
+      "x1": 14.86,
+      "z1": -2.285,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_DOCK_3",
+      "x0": 9.065,
+      "z0": 2.55,
+      "x1": 9.215,
+      "z1": 4.36,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_DOCK_4",
+      "x0": 9.065,
+      "z0": -2.36,
+      "x1": 9.215,
+      "z1": -0.55,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_GARDEN_0",
+      "x0": -15.935,
+      "z0": -2.86,
+      "x1": -15.785,
+      "z1": 2.86,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_GARDEN_1",
+      "x0": -15.86,
+      "z0": 2.785,
+      "x1": -10.14,
+      "z1": 2.935,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_GARDEN_2",
+      "x0": -15.86,
+      "z0": -2.935,
+      "x1": -10.14,
+      "z1": -2.785,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_GARDEN_3",
+      "x0": -10.215,
+      "z0": 1.55,
+      "x1": -10.065,
+      "z1": 2.86,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_GARDEN_4",
+      "x0": -10.215,
+      "z0": -2.86,
+      "x1": -10.065,
+      "z1": -1.55,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_EAST_N",
+      "x0": 5.775,
+      "z0": -4.85,
+      "x1": 5.925,
+      "z1": -0.55,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_EAST_S",
+      "x0": 5.775,
+      "z0": 2.55,
+      "x1": 5.925,
+      "z1": 4.85,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_NORTH_L",
+      "x0": -5.85,
+      "z0": -4.925,
+      "x1": -1.55,
+      "z1": -4.775,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_NORTH_R",
+      "x0": 1.55,
+      "z0": -4.925,
+      "x1": 5.85,
+      "z1": -4.775,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_SOUTH_L",
+      "x0": -5.85,
+      "z0": 4.775,
+      "x1": -1.5,
+      "z1": 4.925,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_SOUTH_R",
+      "x0": 1.5,
+      "z0": 4.775,
+      "x1": 5.85,
+      "z1": 4.925,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_WEST_N",
+      "x0": -5.925,
+      "z0": -4.85,
+      "x1": -5.775,
+      "z1": -1.55,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RAIL_PLAZA_WEST_S",
+      "x0": -5.925,
+      "z0": 1.55,
+      "x1": -5.775,
+      "z1": 4.85,
+      "y0": 0,
+      "y1": 1,
+      "bridge": null
+    },
+    {
+      "name": "COL_RELAY_UPPER",
+      "x0": -0.75,
+      "z0": -0.75,
+      "x1": 0.75,
+      "z1": 0.75,
+      "y0": 1,
+      "y1": 1.84,
+      "bridge": null
+    },
+    {
+      "name": "COL_STAIR_ARCHIVE_GUARD_-1",
+      "x0": 1.235,
+      "z0": -8,
+      "x1": 1.385,
+      "z1": -5,
+      "y0": 0,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_STAIR_ARCHIVE_GUARD_1",
+      "x0": -1.385,
+      "z0": -8,
+      "x1": -1.235,
+      "z1": -5,
+      "y0": 0,
+      "y1": 2.5,
+      "bridge": null
+    },
+    {
+      "name": "COL_STAIR_GARDEN_GUARD_-1",
+      "x0": -8,
+      "z0": -1.385,
+      "x1": -6,
+      "z1": -1.235,
+      "y0": 0,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_STAIR_GARDEN_GUARD_1",
+      "x0": -8,
+      "z0": 1.235,
+      "x1": -6,
+      "z1": 1.385,
+      "y0": 0,
+      "y1": 1.6,
+      "bridge": null
+    },
+    {
+      "name": "COL_WALK_ARCHIVE_STAIR_RAMP",
+      "x0": -1.4,
+      "z0": -8,
+      "x1": 1.4,
+      "z1": -5,
+      "y0": -0.3,
+      "y1": 1.5,
+      "bridge": null,
+      "plane": [
+        0,
+        -0.5,
+        -2.5
+      ]
+    },
+    {
+      "name": "COL_WALK_GARDEN_STAIR_RAMP",
+      "x0": -8,
+      "z0": -1.4,
+      "x1": -6,
+      "z1": 1.4,
+      "y0": -0.3,
+      "y1": 0.6,
+      "bridge": null,
+      "plane": [
+        -0.3,
+        0,
+        -1.8
+      ]
+    },
+    {
+      "name": "COL_WALK_PLAZA",
+      "x0": -6,
+      "z0": -5,
+      "x1": 6,
+      "z1": 5,
+      "y0": -0.8,
+      "y1": 0,
+      "bridge": null,
+      "plane": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "COL_BRIDGE_01_GARDEN",
+      "x0": -10.01,
+      "z0": -1.4,
+      "x1": -7.99,
+      "z1": 1.4,
+      "y0": 0.3,
+      "y1": 0.6,
+      "bridge": "PUZZLE_BRIDGE_01_GARDEN",
+      "plane": [
+        0,
+        0,
+        0.6
+      ]
+    },
+    {
+      "name": "COL_RAIL_BRIDGE_01_GARDEN-1",
+      "x0": -9.94,
+      "z0": -1.385,
+      "x1": -8.07,
+      "z1": -1.235,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": "PUZZLE_BRIDGE_01_GARDEN"
+    },
+    {
+      "name": "COL_RAIL_BRIDGE_01_GARDEN1",
+      "x0": -9.94,
+      "z0": 1.235,
+      "x1": -8.07,
+      "z1": 1.385,
+      "y0": 0.6,
+      "y1": 1.6,
+      "bridge": "PUZZLE_BRIDGE_01_GARDEN"
+    },
+    {
+      "name": "COL_BRIDGE_02_DOCK",
+      "x0": 5.99,
+      "z0": -0.4,
+      "x1": 9.01,
+      "z1": 2.4,
+      "y0": -0.3,
+      "y1": 0,
+      "bridge": "PUZZLE_BRIDGE_02_DOCK",
+      "plane": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "COL_RAIL_BRIDGE_02_DOCK-1",
+      "x0": 6.07,
+      "z0": 2.235,
+      "x1": 8.94,
+      "z1": 2.385,
+      "y0": 0,
+      "y1": 1,
+      "bridge": "PUZZLE_BRIDGE_02_DOCK"
+    },
+    {
+      "name": "COL_RAIL_BRIDGE_02_DOCK1",
+      "x0": 6.07,
+      "z0": -0.385,
+      "x1": 8.94,
+      "z1": -0.235,
+      "y0": 0,
+      "y1": 1,
+      "bridge": "PUZZLE_BRIDGE_02_DOCK"
+    },
+    {
+      "name": "COL_BRIDGE_03_ARCHIVE",
+      "x0": -1.4,
+      "z0": -9.51,
+      "x1": 1.4,
+      "z1": -7.99,
+      "y0": 1.2,
+      "y1": 1.5,
+      "bridge": "PUZZLE_BRIDGE_03_ARCHIVE",
+      "plane": [
+        0,
+        0,
+        1.5
+      ]
+    },
+    {
+      "name": "COL_RAIL_BRIDGE_03_ARCHIVE-1",
+      "x0": 1.235,
+      "z0": -9.44,
+      "x1": 1.385,
+      "z1": -8.07,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": "PUZZLE_BRIDGE_03_ARCHIVE"
+    },
+    {
+      "name": "COL_RAIL_BRIDGE_03_ARCHIVE1",
+      "x0": -1.385,
+      "z0": -9.44,
+      "x1": -1.235,
+      "z1": -8.07,
+      "y0": 1.5,
+      "y1": 2.5,
+      "bridge": "PUZZLE_BRIDGE_03_ARCHIVE"
+    }
+  ]
+}

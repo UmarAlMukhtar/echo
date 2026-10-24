@@ -76,10 +76,8 @@ describe("signal routing", () => {
     const g = stageGuide(STAGES[1], initialJoints());
     expect(g.route).toContain("dock platform");
     expect(g.reached).toBe(false);
-    // j2a at rot 0 joins north+east; the beam arrives from the east so it
-    // passes through but exits north, dying in open air — the guide must
-    // name that stop point, not just "partway and dies".
-    expect(g.joints.find((x) => x.id === "j2a")!.current).toContain("north");
+    // The east-facing dock starts with the beam blocked at j2a.
+    expect(g.joints.find((x) => x.id === "j2a")!.current).toContain("south");
     expect(g.stopsAt.length).toBeGreaterThan(10);
     expect(g.hint).toMatch(/turn j2a/);
   });
@@ -95,7 +93,7 @@ describe("signal routing", () => {
   });
 
   it("stageGuide names the exact failing joint in stage 3", () => {
-    // Solve j3a only: the beam turns south, hits straight j3b (init rot 1 =
+    // Solve j3a only: the beam turns north, hits straight j3b (init rot 1 =
     // east-west) and dies there — the stop point must say j3b.
     let j = initialJoints();
     j = rotate(j, "j3a", 3);
@@ -126,7 +124,7 @@ describe("signal routing", () => {
     expect(res.reached).toBe(false);
     expect(res.edges).toEqual(["src>j2a", "j2a>j2b"]);
     expect(jointReachable("j2b", j)).toBe(true);
-    j = rotate(j, "j2b", 3); // elbow to west
+    j = rotate(j, "j2b", 3); // elbow to east
     res = computeStage(STAGES[1], j);
     expect(res.reached).toBe(true);
     expect(res.edges).toContain("j2b>target");
@@ -168,9 +166,9 @@ describe("signal routing", () => {
 describe("walkable floors", () => {
   it("plaza and fixed causeways are always walkable", () => {
     const j = initialJoints();
-    expect(isWalkable(0, 11.5, j)).toBe(true); // spawn
-    expect(isWalkable(0, 6, j)).toBe(true); // south causeway
-    expect(isWalkable(-4, 0, j)).toBe(true); // plaza
+    expect(isWalkable(0, 3.8, j)).toBe(true); // spawn
+    expect(isWalkable(0.4, -6, j)).toBe(true); // south causeway
+    expect(isWalkable(-3.5, 2, j)).toBe(true); // plaza
   });
 
   it("the void and solid structures are not walkable", () => {
@@ -181,9 +179,9 @@ describe("walkable floors", () => {
 
   it("causeway tiles only stand once their beam segment is energized", () => {
     const j0 = initialJoints();
-    expect(isWalkable(-9.6, -1.5, j0)).toBe(false); // garden gap tile
+    expect(isWalkable(-9, 0, j0)).toBe(false); // garden gap tile
     const j1 = rotate(j0, "j1");
-    expect(isWalkable(-9.6, -1.5, j1)).toBe(true);
+    expect(isWalkable(-9, 0, j1)).toBe(true);
   });
 
   it("slideMove blocks crossing an unpowered gap but slides along edges", () => {
@@ -227,17 +225,17 @@ describe("computeEnding — all 8 decision combinations", () => {
 /* -------------------------------- saves ------------------------------ */
 
 const goodSave = () => ({
-  version: 2,
+  version: 3,
   fragments: ["tide"],
   talkedTo: ["mirai"],
   joints: initialJoints(),
   decisions: {},
-  playerPos: [0, 11.5],
+  playerPos: [0, 3.8],
   mode: "3d",
   savedAt: Date.now(),
 });
 
-describe("save validation (v2)", () => {
+describe("save validation (v3)", () => {
   it("accepts a well-formed save", () => {
     expect(validateSave(goodSave())?.fragments).toEqual(["tide"]);
   });
@@ -329,7 +327,7 @@ describe("save validation (v2)", () => {
         talkedTo: ["mirai"],
         joints: initialJoints(),
         decisions: {},
-        playerPos: [0, 11.5],
+        playerPos: [0, 3.8],
         mode: "3d",
       },
       st
@@ -378,7 +376,7 @@ describe("save validation (v2)", () => {
         joints: initialJoints(),
         decisions: { retain: true, serve: true, control: true },
         reachedEnding: true,
-        playerPos: [0, 11.5],
+        playerPos: [0, 3.8],
         mode: "3d",
       },
       st
@@ -649,7 +647,7 @@ describe("game store", () => {
     expect(ids).toEqual(["j1", "j2a", "j3a"]);
     expect(ids).not.toContain("j2b");
     // powering j2a's exit opens the prompt on j2b
-    const powered = { ...s, joints: { ...s.joints, j2a: 1 } };
+    const powered = { ...s, joints: { ...s.joints, j2a: 2 } };
     expect(
       activeInteractables(powered)
         .filter((i) => i.kind === "joint")
@@ -673,7 +671,7 @@ describe("game store", () => {
         joints: initialJoints(),
         decisions: { retain: true, serve: true, control: true },
         reachedEnding: true,
-        playerPos: [0, 11.5],
+        playerPos: [0, 3.8],
         mode: "3d",
       },
       w.localStorage as ReturnType<typeof memStorage>
@@ -698,7 +696,7 @@ describe("game store", () => {
       expect(it.kind).toBe("npc");
     }
     expect(NPC_INTERACTABLES.mirai.position[0]).toBeLessThan(-11);
-    expect(NPC_INTERACTABLES.ilyas.position[0]).toBeGreaterThan(10);
+    expect(NPC_INTERACTABLES.ilyas.position[1]).toBeLessThan(-10);
   });
 });
 

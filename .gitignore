@@ -23,3 +23,6 @@ Thumbs.db
 
 # Add entries appropriate to your chosen language or framework.
 tsconfig.tsbuildinfo
+
+# Local semantic code tooling
+.serena/

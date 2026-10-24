@@ -1,14 +1,11 @@
 import type { DecisionId, Decisions, FragmentId, NpcId } from "./types";
 import { DECISION_OWNER, SPAWN } from "./story";
 import { PLAZA_SAFE, connectedToPlaza, isWalkable } from "./city";
-import {
-  JOINT_IDS,
-  initialJoints,
-} from "./signal";
+import { JOINT_IDS, initialJoints } from "./signal";
 import type { JointId, JointRotations } from "./signal";
 
-export const SAVE_KEY = "echo-save-v2";
-export const SAVE_VERSION = 2;
+export const SAVE_KEY = "echo-save-v3";
+export const SAVE_VERSION = 3;
 /** Keys written by older builds — detected and reported as outdated. */
 export const LEGACY_SAVE_KEYS = ["echo-save-v1"];
 
@@ -67,7 +64,7 @@ function validateJoints(raw: unknown): JointRotations | null {
 function normalizePosition(
   x: number,
   z: number,
-  joints: JointRotations
+  joints: JointRotations,
 ): [number, number] {
   const usable = (px: number, pz: number) =>
     isWalkable(px, pz, joints) && connectedToPlaza(px, pz, joints);
@@ -81,7 +78,7 @@ function normalizePosition(
 export function validateSave(raw: unknown): SaveData | null {
   if (typeof raw !== "object" || raw === null) return null;
   const s = raw as Record<string, unknown>;
-  if (s.version !== SAVE_VERSION) return null;
+  if (s.version !== SAVE_VERSION && s.version !== 2) return null;
   if (
     !Array.isArray(s.fragments) ||
     !s.fragments.every((f) => FRAGMENTS.includes(f as FragmentId)) ||
@@ -102,6 +99,12 @@ export function validateSave(raw: unknown): SaveData | null {
   }
   const joints = validateJoints(s.joints);
   if (!joints) return null;
+  // v2 used the old west-facing dock; preserve turn progress on its east-facing replacement.
+  if (s.version === 2) {
+    const old = s.joints as Partial<JointRotations>;
+    joints.j2a = ((old.j2a ?? 0) + 1) % 4;
+    joints.j2b = ((old.j2b ?? 0) + 1) % 4;
+  }
   if (typeof s.decisions !== "object" || s.decisions === null) return null;
   const decisions: Decisions = {};
   for (const [k, v] of Object.entries(s.decisions)) {
@@ -143,19 +146,23 @@ export function validateSave(raw: unknown): SaveData | null {
     joints,
     decisions,
     reachedEnding: s.reachedEnding === true,
-    playerPos: normalizePosition(s.playerPos[0], s.playerPos[1], joints),
+    playerPos:
+      s.version === 2
+        ? [...SPAWN]
+        : normalizePosition(s.playerPos[0], s.playerPos[1], joints),
     mode,
     savedAt: s.savedAt,
   };
 }
 
-export function loadSave(
-  storage: StorageLike | undefined
-): { status: LoadStatus; data: SaveData | null } {
+export function loadSave(storage: StorageLike | undefined): {
+  status: LoadStatus;
+  data: SaveData | null;
+} {
   if (!storage) return { status: "unavailable", data: null };
   let raw: string | null;
   try {
-    raw = storage.getItem(SAVE_KEY);
+    raw = storage.getItem(SAVE_KEY) ?? storage.getItem("echo-save-v2");
   } catch {
     return { status: "unavailable", data: null };
   }
@@ -185,7 +192,7 @@ export function writeSave(
   data: Omit<SaveData, "version" | "savedAt" | "reachedEnding"> & {
     reachedEnding?: boolean;
   },
-  storage: StorageLike | undefined
+  storage: StorageLike | undefined,
 ): boolean {
   if (!storage) return false;
   const payload: SaveData = {
@@ -206,6 +213,7 @@ export function clearSave(storage: StorageLike | undefined): void {
   if (!storage) return;
   try {
     storage.removeItem(SAVE_KEY);
+    storage.removeItem("echo-save-v2");
     for (const key of LEGACY_SAVE_KEYS) storage.removeItem(key);
   } catch {
     /* unavailable storage: nothing to clear */

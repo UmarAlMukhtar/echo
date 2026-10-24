@@ -1,5 +1,47 @@
 # Change log
 
+## 2026-10-25T04:33:02+05:30 — Publish the stable ECHO animation preview
+
+- Changed: with explicit owner approval, made only the stable codex/blender-integration preview hostname public for current/future branch updates. Updated README and SUBMISSION links, implementation SHA (4bccde9), 77-test count, verification evidence and AI usage.
+- Validation: hosted preview Ready; real-keyboard frames showed both walking cadences, E solved the first stage and reload/Continue restored it with no browser warnings/errors. Anonymous exact-URL HTML and all three GLB requests returned HTTP 200 without redirect; model hashes matched. Documentation whitespace/local-link checks passed.
+- Limits: documentation/publication only; prior 77-test/lint/typecheck/build results apply to the unchanged animation code. Vercel Authentication remains enabled elsewhere; no production promotion, merge, unrelated project change, event submission or physical mobile/gamepad testing.
+
+## 2026-10-25T04:11:13+05:30 — Make keeper footsteps visible and quicken the normal gait
+
+- Changed: `lib/game/keeper-animation.ts` now plays Walk while moving even under Reduced Motion. Normal cadence is 1.8×; reduced cadence is 1× with a neutral still pose when stopped. Existing authored breathing, scarf/lantern sway and one-shot interactions are reused. Added real-GLB leg/arm movement, cadence and quiet-pose tests and updated README/design/integration/AI usage documentation.
+- Why: OS Reduced Motion selected Idle and froze the mixer, making the keeper slide without stepping. The owner approved visible leg/arm movement with a calmer reduced-motion variant.
+- Validation: test-first failures reproduced the freeze and absent cadence; 77 tests, typecheck, lint and production build pass. Local production browser held-key frames show both walking modes; relay interaction, pause movement blocking, save/reload and guided→3D remount passed with no browser warnings/errors.
+- Limits: no GLB, movement controller, collision, puzzle or save changes. Hosted preview publication is checked separately; no physical mobile/gamepad testing and no merge.
+
+## 2026-10-25T03:47:29+05:30 — Verify and publish the scoped ECHO preview
+
+- Changed: recorded the working public demo URL and exact deployment SHA in README, SUBMISSION and integration verification; added actual hosted-check and owner-approval evidence to AI_USAGE.
+- Validation: Vercel Git preview `590b8e96676c3df5146fd365d5031abb524eb0cf` reached Ready in 59 seconds. Real hosted WASD/E completed garden routing/bridge/NPC/choice; reload retained progress. Guided UI completed dock/archive/reveal/remaining choices and The City Remembers, then returned to a moving 3D keeper. Browser warnings/errors were empty. Anonymous HTML plus all three model files returned HTTP 200; model hashes match the immutable handoff. Documentation whitespace/local-link checks passed.
+- Access: owner explicitly approved public access to the exact delivered hostname; added only that domain exception. Other previews retain Vercel Authentication. No production promotion, merge or unrelated project changes.
+- Limits: no new application code (prior 74-test/lint/typecheck/build evidence); only one ending was replayed on this host, with all three checked locally. No physical mobile/gamepad testing; event submission not performed.
+
+## 2026-10-25T03:39:39+05:30 — Configure ECHO Git previews and refresh demo handoff
+
+- Changed: created a separate ECHO Vercel project connected to UmarAlMukhtar/echo, with the Next.js preset, Node.js 24 and main as its production branch. Added preview setup/status links to README, and corrected SUBMISSION's stale implementation SHA, 49-test count and procedural-only asset claim. Updated integration verification and AI usage with actual access/setup evidence.
+- Why: the owner authorized publishing the committed integration. The connector still returned 403 after consent, while the signed-in browser worked. Vercel classified its manual Preview action as Production; that build was canceled before readiness. Git branch previews will be used instead.
+- Validation: observed project settings, exact source d689735 and canceled status in Vercel; documentation whitespace/local-link checks. Application code is unchanged, so the previous 74-test/build results remain the implementation evidence; hosted gameplay checks are pending.
+- Limitations: no public/hosted readiness claim yet, no protection changes, no automatic merge or event submission.
+
+## 2026-10-25T02:25:20+05:30 — Final production verification and title fallback feedback
+
+- Changed: title screen renders the existing notice and explicit 3D retries clear stale feedback so a first-load model failure is explained before a run starts. Added final production replay/recovery evidence to integration documentation.
+- Why: an intentionally missing map correctly fell back and retried after restoration, but its title menu did not show the reason for the 3D switch.
+- Validation: 74 tests, typecheck/lint, collider data check and fresh production build passed after this feedback change. Actual production UI reached all three endings, retained guided/3D saves and replay protection, and recovered from the induced missing-model case. Hosted preview remains blocked on Vercel team-access approval; local production preview is verified.
+- Limitations: no physical mobile/gamepad test; custom kinematic collision model as documented. No merge.
+
+## 2026-10-25T02:15:58+05:30 — Integrate approved Blender district and memory keeper
+
+- Changed: imported the three checksum-verified runtime GLBs and source integration notes; replaced procedural map/player visuals, kept the existing camera-relative controller, and added floor-height sampling from nine exported slab/ramp/deck surfaces and 64 collision proxies. Three named bridge parents share the exact gate offset used by navigation; NPC spawns match exported empties. Six joints use the new approved layout; stories, choices, three endings and guided mode remain.
+- Added: in-place Idle/Walk/one-shot Interact animation, skeleton clone and mount/cleanup-safe mixer lifecycle, per-stage reset with honest rescue feedback, v2→v3 save migration preserving narrative progress, failed-model fallback and rejected GLB cache clearing for retry. Imported materials are cloned before warm/cold choice changes. Removed the obsolete procedural relay and old skyline/floor data.
+- Why: integrate the user's approved original art without replacing ongoing gameplay. All implementation continued locally in Codex after Devin usage was exhausted; no new Devin work was requested.
+- Validation: baseline 61 tests passed. Full real-keyboard 3D playthrough crossed all three bridges/stairs, rotated all six joints, heard all three residents, made all-open choices and reached The City Remembers. Browser reload restored dock progress; guided reset rescued the player and returned to 3D. New navigation/asset/animation/migration/reset tests and focused transient-load retry regression cover the changed contracts. Final production checks and replay results are recorded in docs/assets/VERIFICATION.md.
+- Limitations: custom kinematic floor/obstacle navigation, no rigid-body/jump physics or moving-bridge riding; stairs use smooth collision wedges. Legacy coordinates restart at entry while story progress survives. Hosting is reported separately from local preview proof. Human review pending; no merge.
+
 ## 2026-10-24T17:58:00+00:00 — Failed milestone writes surface feedback
 
 - Changed: `lib/game/store.ts` — `persist` now uses `writeSave`'s result: when storage exists but the write throws, `lastNotice` becomes "Couldn't save progress — browser storage is unavailable." instead of silently reloading an older valid save and reporting `saveStatus:"ok"` as if the milestone persisted. The older save still keeps `hasSave`/`saveStatus` from what is actually stored, so Continue and the overwrite guard reflect reality. No storage at all stays covered by the startup banner rather than spamming every milestone.

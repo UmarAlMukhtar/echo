@@ -33,3 +33,37 @@ This preparation is separate from participant project implementation and partici
 - Human review: pending maintainer review of this pull request.
 - Validation: documentation diff, whitespace, and local Markdown link checks;
   no application code changed and no runtime checks were needed.
+
+## Blender application integration — 2026-10-25T02:15:58+05:30
+
+- Tool: Codex, running locally; one independent Codex code review. No new Devin agent calls. The previous Devin monitor was deleted at the user's request to stop using its exhausted quota.
+- Task: integrate the approved map and animated keeper from the supplied immutable Git commits into the latest pushed gameplay branch (base `358d5cbc4fbee6ad4b0181a5c8e05808f5dbdfb6`).
+- Contribution: runtime imports/provenance, derived collider manifest, raised-route navigation, bridge gates, new joint/NPC layout, skeleton animation/lifecycle, save migration, reset feedback, model-error fallback/retry and corresponding tests/docs. No php2shell-live changes and no automatic merge.
+- Corrections from actual checks: fixed Strict Mode reuse of a disposed mixer, removed a problematic in-Canvas HTML loading portal, made stage reset atomic so its final feedback is truthful, and cleared rejected GLB cache entries after the independent review found retry reused the error.
+- Verification: real UI/WASD/E browser playthrough plus automated project checks; see [integration verification](docs/assets/VERIFICATION.md). Human design/code review remains pending; automated review is not human approval.
+
+- Final production review: all three endings reached through real UI; guided save/reload and 3D recovery checked. A controlled missing-map case confirmed cache retry and revealed absent title feedback; Codex added the existing notice to the title. 74 tests, typecheck, lint and production build passed. Explicit retry also clears stale fallback feedback. Hosted preview requires Vercel team authorization (403); no hosted success claimed.
+
+## Hosted preview preparation — 2026-10-25T03:39:39+05:30
+
+- Tool: Codex, using the owner's signed-in Vercel browser after the connector continued to reject team scope with 403 despite consent.
+- Contribution: created the separate ECHO project, connected its existing GitHub repository, configured Next.js/Node.js 24 and confirmed main as the production branch. Canceled a manual build that Vercel classified as Production despite its Preview action label. Prepared Git preview instructions and corrected stale submission art/test/SHA information. No application code or php2shell-live changes.
+- Validation: settings and cancellation were observed in Vercel; documentation whitespace/link checks. Hosted gameplay verification remains a separate next step. Human review and event submission remain pending; no merge.
+
+## Hosted verification and public demo — 2026-10-25T03:47:29+05:30
+
+- Tool: Codex, local repository and browser. Vercel Git built preview `590b8e96676c3df5146fd365d5031abb524eb0cf`; no application change was needed.
+- Contribution: verified the hosted model/controller/puzzle/save/guided flow through THE CITY REMEMBERS and returned to 3D; checked browser warnings/errors. After explicit owner approval, added an exception for only the delivered immutable preview hostname. Anonymous HTML/model requests verified public access and exact model hashes. Updated README, SUBMISSION and verification evidence; human review remains pending and PR #3 is unmerged.
+- Validation: hosted build Ready in 59 seconds, real UI/keyboard flow and save/reload, empty browser warnings/errors, anonymous HTTP 200/checksums, documentation diff/link checks. No new game-code changes; prior 74 tests/lint/typecheck/local production build remain applicable. No physical device checks or event submission.
+
+## Walking animation polish — 2026-10-25T04:11:13+05:30
+
+- Tool: Codex, local implementation after the owner approved the short animation design. No Devin calls.
+- Contribution: corrected Reduced Motion freezing all skeletal motion, retimed the existing Walk clip for a brisker normal gait and calmer reduced gait, and kept normal idle breathing/lantern sway with a quiet stopped reduced pose. Updated real-GLB regression tests and animation documentation; no asset file, controller, collision, puzzle or save schema changes.
+- Validation: watched the frozen-walk and cadence tests fail before the fix; 77 tests, typecheck, lint and production build passed. Actual production-browser keys and captured frames show feet stepping in both modes; pause, relay interaction, reload/Continue and guided→3D worked without browser warnings/errors. Hosted publication is separate from these local checks; human review remains pending.
+
+## Stable public preview — 2026-10-25T04:33:02+05:30
+
+- Tool: Codex browser control and local documentation update. The owner explicitly approved public access for the stable ECHO branch hostname and its future updates.
+- Contribution: added that exact hostname protection exception, verified anonymous game/model access without credentials or bypass tokens, and updated demo links/current implementation SHA/test count in README and SUBMISSION. Global Vercel Authentication and unrelated projects were preserved.
+- Validation: hosted animation commit 4bccde9 reached Ready and was browser-checked in both motion modes, with a successful relay interaction and save/reload; warning/error log empty. Anonymous HTML/model requests returned HTTP 200 without redirect and model checksums matched. Documentation whitespace/link checks passed; no new game code or physical device testing. Human review remains pending and PR #3 is unmerged.
